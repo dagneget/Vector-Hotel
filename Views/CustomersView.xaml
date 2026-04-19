@@ -1,0 +1,184 @@
+<UserControl x:Class="HRS.Views.CustomersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewmodels="clr-namespace:HRS.ViewModels"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="14"
+             TextOptions.TextFormattingMode="Ideal"
+             TextOptions.TextRenderingMode="Auto"
+             Background="{DynamicResource SurfaceContainerBrush}"
+             FontFamily="{DynamicResource MaterialDesignFont}">
+
+    <UserControl.DataContext>
+        <viewmodels:CustomersViewModel />
+    </UserControl.DataContext>
+
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Left Column: Data Grid and Header -->
+        <Grid Grid.Column="0" Margin="0,0,20,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Header Panel -->
+            <materialDesign:Card Grid.Row="0" Margin="0,0,0,20" Padding="15" Background="{DynamicResource SurfaceContainerHighBrush}" UniformCornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp2">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Grid.Column="0" Text="Customer Directory" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center" />
+
+                    <!-- Search Box -->
+                    <TextBox Grid.Column="1" Margin="40,0,20,0" materialDesign:HintAssist.Hint="Search customers by name, phone, email..." 
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             VerticalAlignment="Center"/>
+
+                    <!-- Add Button -->
+                    <Button Grid.Column="2" Content="+ Add Customer" Command="{Binding AddCustomerCommand}" 
+                            Style="{StaticResource MaterialDesignRaisedButton}" 
+                            materialDesign:ButtonAssist.CornerRadius="6"
+                            Width="160" Height="40" FontSize="14"/>
+                </Grid>
+            </materialDesign:Card>
+
+            <!-- Data Grid -->
+            <materialDesign:Card Grid.Row="1" Background="{DynamicResource SurfaceContainerLowestBrush}" UniformCornerRadius="8" materialDesign:ElevationAssist.Elevation="Dp2">
+                <DataGrid ItemsSource="{Binding Customers}" SelectedItem="{Binding SelectedCustomer}"
+                          AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column"
+                          SelectionMode="Single" SelectionUnit="FullRow"
+                          BorderThickness="0" Background="Transparent">
+                    
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Margin" Value="0,0,0,4" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource PrimaryContainerBrush}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Full Name" Binding="{Binding FullName}" Width="*" />
+                        <DataGridTextColumn Header="Type" Binding="{Binding CustomerType}" Width="100" />
+                        <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="150" />
+                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="180" />
+                        <DataGridTextColumn Header="Nationality" Binding="{Binding Nationality}" Width="120" />
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </materialDesign:Card>
+        </Grid>
+
+        <!-- Right Column: Slide-out Detail Panel -->
+        <materialDesign:Card Grid.Column="1" HorizontalAlignment="Right" Background="{DynamicResource SurfaceContainerHighBrush}" 
+                             UniformCornerRadius="12" materialDesign:ElevationAssist.Elevation="Dp8"
+                             Width="450" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+            
+            <Grid Margin="0, 0, 0, 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Panel Header -->
+                <Border Grid.Row="0" Background="{DynamicResource SurfaceContainerLowestBrush}" CornerRadius="12,12,0,0" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="Customer Profile" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}"/>
+                        <TextBlock Text="Fill out the basic information below." FontSize="13" Foreground="Gray" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Scrollable Form Area -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,10,0,0">
+                    <StackPanel Margin="20,10,20,10" DataContext="{Binding EditingContext}">
+                        
+                        <TextBlock Text="Personal Information" FontWeight="SemiBold" FontSize="16" Foreground="White" Margin="0,0,0,15"/>
+
+                        <TextBox Text="{Binding FullName}" materialDesign:HintAssist.Hint="Full Name *" 
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
+                        
+                        <TextBox Text="{Binding Phone}" materialDesign:HintAssist.Hint="Phone Number *" 
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
+                        
+                        <TextBox Text="{Binding Email}" materialDesign:HintAssist.Hint="Email Address" 
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
+                        
+                        <ComboBox Text="{Binding Gender}" materialDesign:HintAssist.Hint="Gender" 
+                                  Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,0,0,20">
+                            <ComboBoxItem Content="Male" />
+                            <ComboBoxItem Content="Female" />
+                            <ComboBoxItem Content="Other" />
+                        </ComboBox>
+                        
+                        <TextBox Text="{Binding Nationality}" materialDesign:HintAssist.Hint="Nationality" 
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
+
+                        <TextBlock Text="Identification &amp; Address" FontWeight="SemiBold" FontSize="16" Foreground="White" Margin="0,20,0,15"/>
+
+                        <ComboBox Text="{Binding IdType}" materialDesign:HintAssist.Hint="Identity Document Type" 
+                                  Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,0,0,20">
+                            <ComboBoxItem Content="Passport" />
+                            <ComboBoxItem Content="National ID" />
+                            <ComboBoxItem Content="Driver's License" />
+                        </ComboBox>
+                        
+                        <TextBox Text="{Binding IdNumber}" materialDesign:HintAssist.Hint="ID Number" 
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,0,0,20"/>
+                                 
+                        <TextBox Text="{Binding Address}" materialDesign:HintAssist.Hint="Address" 
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" TextWrapping="Wrap" AcceptsReturn="True" Height="60" Margin="0,0,0,20"/>
+
+                        <TextBlock Text="Status &amp; Notes" FontWeight="SemiBold" FontSize="16" Foreground="White" Margin="0,20,0,15"/>
+
+                        <ComboBox Text="{Binding CustomerType}" materialDesign:HintAssist.Hint="Customer Type" 
+                                  Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,0,0,20">
+                            <ComboBoxItem Content="Regular" />
+                            <ComboBoxItem Content="VIP" />
+                            <ComboBoxItem Content="Corporate" />
+                        </ComboBox>
+                        
+                        <ComboBox Text="{Binding Status}" materialDesign:HintAssist.Hint="Status" 
+                                  Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,0,0,20">
+                            <ComboBoxItem Content="Active" />
+                            <ComboBoxItem Content="Inactive" />
+                        </ComboBox>
+
+                        <TextBox Text="{Binding Notes}" materialDesign:HintAssist.Hint="Notes / Remarks" 
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" TextWrapping="Wrap" AcceptsReturn="True" Height="80" Margin="0,0,0,10"/>
+
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Action Footer -->
+                <Border Grid.Row="2" Background="{DynamicResource SurfaceContainerLowestBrush}" CornerRadius="0,0,12,12" Padding="20">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Delete" Command="{Binding DataContext.DeleteCustomerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                Style="{StaticResource MaterialDesignFlatButton}" Foreground="#ff4b4b" Margin="0,0,50,0"/>
+
+                        <Button Content="Cancel" Command="{Binding DataContext.CancelEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                Style="{StaticResource MaterialDesignOutlinedButton}" Margin="0,0,10,0"/>
+                                
+                        <Button Content="Save Customer" Command="{Binding DataContext.SaveCustomerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                Style="{StaticResource MaterialDesignRaisedButton}" materialDesign:ButtonAssist.CornerRadius="6" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </materialDesign:Card>
+    </Grid>
+</UserControl>

@@ -1,0 +1,282 @@
+<UserControl x:Class="HRS.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewmodels="clr-namespace:HRS.ViewModels"
+             TextElement.Foreground="{DynamicResource TextPrimaryBrush}"
+             TextOptions.TextFormattingMode="Ideal"
+             Background="Transparent">
+
+    <UserControl.DataContext>
+        <viewmodels:DashboardViewModel />
+    </UserControl.DataContext>
+
+    <Grid Margin="30,20,30,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <!-- Top Metrics -->
+            <RowDefinition Height="*" />    <!-- Main Dashboard Body -->
+        </Grid.RowDefinitions>
+
+        <!-- Top Metrics Cards -->
+        <Grid Grid.Row="0" Margin="0,0,0,30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Occupancy Card -->
+            <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#252525">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="OCCUPANCY RATE" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock Text="{Binding OccupancyText}" FontSize="36" FontWeight="Bold" Foreground="White" Margin="0,15,0,0"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <materialDesign:PackIcon Kind="TrendingUp" Foreground="{DynamicResource SuccessGreenBrush}" Width="16" Height="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="+3.1% from last week" FontSize="11" Foreground="{DynamicResource SuccessGreenBrush}" Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <materialDesign:PackIcon Kind="BedOutline" HorizontalAlignment="Right" Opacity="0.1" Width="60" Height="60" VerticalAlignment="Center" Foreground="White" />
+                </Grid>
+            </Border>
+
+            <!-- ADR Card -->
+            <Border Grid.Column="2" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#252525">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="AVERAGE DAILY RATE" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock Text="{Binding AdrText}" FontSize="36" FontWeight="Bold" Foreground="White" Margin="0,15,0,0"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <materialDesign:PackIcon Kind="TrendingUp" Foreground="{DynamicResource SuccessGreenBrush}" Width="16" Height="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="+12% seasonal peak" FontSize="11" Foreground="{DynamicResource SuccessGreenBrush}" Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <materialDesign:PackIcon Kind="CurrencyUsd" HorizontalAlignment="Right" Opacity="0.1" Width="60" Height="60" VerticalAlignment="Center" Foreground="White" />
+                </Grid>
+            </Border>
+
+            <!-- RevPAR Card -->
+            <Border Grid.Column="4" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#252525">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="REVPAR" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock Text="{Binding RevparText}" FontSize="36" FontWeight="Bold" Foreground="White" Margin="0,15,0,0"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <materialDesign:PackIcon Kind="TrendingDown" Foreground="{DynamicResource DangerRedBrush}" Width="16" Height="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="-0.8% target variance" FontSize="11" Foreground="{DynamicResource DangerRedBrush}" Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <materialDesign:PackIcon Kind="ChartLine" HorizontalAlignment="Right" Opacity="0.1" Width="60" Height="60" VerticalAlignment="Center" Foreground="White" />
+                </Grid>
+            </Border>
+
+            <!-- Arrivals Card -->
+            <Border Grid.Column="6" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#252525">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="ARRIVALS TODAY" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock Text="{Binding ArrivalsText}" FontSize="36" FontWeight="Bold" Foreground="White" Margin="0,15,0,0"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <Ellipse Width="24" Height="24" Fill="#3382ABFF" />
+                            <Ellipse Width="24" Height="24" Fill="#332DCC70" Margin="-8,0,0,0" />
+                            <TextBlock Text="+39" FontSize="11" Foreground="White" FontWeight="Bold" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <materialDesign:PackIcon Kind="BagChecked" HorizontalAlignment="Right" Opacity="0.1" Width="60" Height="60" VerticalAlignment="Center" Foreground="White" />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Main Dashboard Body (Splits into Recent Reservations and Room Status) -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="380" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: Recent Reservations -->
+            <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" BorderThickness="1" BorderBrush="#252525" Padding="25">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,20">
+                        <StackPanel>
+                            <TextBlock Text="Recent Reservations" FontSize="22" FontWeight="Bold" Foreground="White" />
+                            <TextBlock Text="ACTIVE QUEUE FOR NEXT 24 HOURS" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="FILTER" Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#353535" Foreground="White" Height="32" Padding="15,0" Margin="0,0,10,0"/>
+                            <Button Content="VIEW ALL" Style="{StaticResource MaterialDesignRaisedButton}" Background="#353535" BorderThickness="0" Foreground="White" Height="32" Padding="15,0"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding RecentReservations}" AutoGenerateColumns="False" IsReadOnly="True" 
+                              HeadersVisibility="Column" SelectionMode="Single" BorderThickness="0" Background="Transparent" RowHeight="70">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                <Setter Property="FontSize" Value="11"/>
+                                <Setter Property="Padding" Value="0,0,0,10"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="GUEST" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Ellipse Width="40" Height="40" Fill="#282828" Stroke="#3382ABFF" Margin="0,0,15,0"/>
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding CustomerName}" FontWeight="Bold" Foreground="White" FontSize="14"/>
+                                                <TextBlock Text="Gold Member • 3 nights" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3,0,0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="ROOM" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding RoomNumber}" FontWeight="SemiBold" Foreground="White" FontSize="13"/>
+                                            <TextBlock Text="KING OCEAN VIEW" FontSize="9" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="DATE" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding CheckInDate, StringFormat=MMM dd}" FontWeight="SemiBold" Foreground="White" FontSize="13"/>
+                                            <TextBlock Text="– 27" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="STATUS" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#1A2DCC70" CornerRadius="4" Padding="8,4" HorizontalAlignment="Left">
+                                            <TextBlock Text="{Binding ReservationStatus}" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource SuccessGreenBrush}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="AMOUNT" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right">
+                                            <TextBlock Text="{Binding TotalPrice, StringFormat=${0:N2}}" FontWeight="Bold" Foreground="White" FontSize="14"/>
+                                            <TextBlock Text="Paid" FontSize="9" Foreground="{DynamicResource SuccessGreenBrush}" HorizontalAlignment="Right" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- Right: Status and Feed -->
+            <StackPanel Grid.Column="2">
+                <!-- Room Status Chart (Simplified representation) -->
+                <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="25" BorderThickness="1" BorderBrush="#252525" Margin="0,0,0,25">
+                    <StackPanel>
+                        <TextBlock Text="ROOM STATUS" FontSize="12" FontWeight="Bold" Foreground="White" Margin="0,0,0,25"/>
+                        <Grid Height="200" Width="200" HorizontalAlignment="Center">
+                            <!-- Circular status ring background -->
+                            <Ellipse Stroke="#282828" StrokeThickness="15" />
+                            <!-- Occupied arc -->
+                            <Ellipse Stroke="{DynamicResource NocturnalAccentBrush}" StrokeThickness="15" StrokeDashArray="7,3" />
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding TotalRooms}" FontSize="36" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                <TextBlock Text="TOTAL ROOMS" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
+                        
+                        <StackPanel Margin="0,25,0,0">
+                            <Grid Margin="0,5">
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="8" Height="8" Fill="{DynamicResource NocturnalAccentBrush}" Margin="0,0,10,0"/>
+                                    <TextBlock Text="Occupied" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding OccupiedRooms}" HorizontalAlignment="Right" FontWeight="Bold" Foreground="White"/>
+                            </Grid>
+                            <Grid Margin="0,5">
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="8" Height="8" Fill="{DynamicResource SuccessGreenBrush}" Margin="0,0,10,0"/>
+                                    <TextBlock Text="Available" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding AvailableRooms}" HorizontalAlignment="Right" FontWeight="Bold" Foreground="White"/>
+                            </Grid>
+                            <Grid Margin="0,5">
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="8" Height="8" Fill="{DynamicResource DangerRedBrush}" Margin="0,0,10,0"/>
+                                    <TextBlock Text="Maintenance" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding MaintenanceRooms}" HorizontalAlignment="Right" FontWeight="Bold" Foreground="White"/>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Front Desk Feed -->
+                <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="25" BorderThickness="1" BorderBrush="#252525">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="0,0,0,20">
+                            <TextBlock Text="FRONT DESK FEED" FontSize="12" FontWeight="Bold" Foreground="White" />
+                            <Border Background="#1AFF4B4B" Padding="4,2" CornerRadius="4" HorizontalAlignment="Right">
+                                <TextBlock Text="LIVE" FontSize="9" FontWeight="Bold" Foreground="{DynamicResource DangerRedBrush}"/>
+                            </Border>
+                        </Grid>
+
+                        <ItemsControl Grid.Row="1" ItemsSource="{Binding FrontDeskFeed}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,20">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="40" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" Background="#282828" Width="36" Height="36" CornerRadius="8" VerticalAlignment="Top">
+                                            <materialDesign:PackIcon Kind="{Binding IconName}" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="13" Foreground="White" />
+                                            <TextBlock Text="{Binding SubText}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3,0,0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </Grid>
+        
+        <!-- FAB Add Button -->
+        <Button Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Margin="0,0,0,0" Padding="0"
+                Style="{StaticResource MaterialDesignFloatingActionAccentButton}" Background="{DynamicResource NocturnalAccentBrush}" BorderThickness="0">
+            <materialDesign:PackIcon Kind="Plus" Width="24" Height="24" Foreground="#111111"/>
+        </Button>
+    </Grid>
+</UserControl>

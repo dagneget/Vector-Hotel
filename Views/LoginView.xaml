@@ -1,0 +1,43 @@
+<Window x:Class="HRS.Views.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:viewmodels="clr-namespace:HRS.ViewModels"
+        Title="Login - Nocturnal" Height="550" Width="450"
+        WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize"
+        Background="{DynamicResource AppBackgroundBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}"
+        FontFamily="Segoe UI"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+        
+    <Window.DataContext>
+        <viewmodels:LoginViewModel />
+    </Window.DataContext>
+
+    <Grid>
+        <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Margin="50" Padding="30" BorderThickness="1" BorderBrush="#252525">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="NOCTURNAL" FontSize="26" FontWeight="Heavy" FontStyle="Italic" Foreground="{DynamicResource NocturnalAccentBrush}" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                <TextBlock Text="CONCIERGE ACCESS" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,40"/>
+                
+                <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
+                         materialDesign:HintAssist.Hint="Username" 
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
+                         Margin="0,0,0,20" FontSize="14" Foreground="White" CaretBrush="White"/>
+                         
+                <PasswordBox x:Name="pwdBox"
+                             materialDesign:HintAssist.Hint="Password" 
+                             Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" 
+                             Margin="0,0,0,5" FontSize="14" Foreground="White" CaretBrush="White"/>
+                
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="{DynamicResource DangerRedBrush}" FontSize="12" Height="20" Margin="0,5,0,15" HorizontalAlignment="Center"/>
+
+                <Button Content="SIGN IN" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=pwdBox}"
+                        Style="{StaticResource MaterialDesignRaisedButton}" Background="{DynamicResource NocturnalAccentBrush}" Foreground="#111111" FontWeight="Bold" Height="45" materialDesign:ButtonAssist.CornerRadius="6" Margin="0,0,0,10"/>
+                
+                <Button Content="EXIT" Command="{Binding ExitCommand}"
+                        Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="45" materialDesign:ButtonAssist.CornerRadius="6"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

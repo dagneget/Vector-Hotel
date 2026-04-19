@@ -1,0 +1,149 @@
+<UserControl x:Class="HRS.Views.ReportsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewmodels="clr-namespace:HRS.ViewModels"
+             TextElement.Foreground="{DynamicResource TextPrimaryBrush}"
+             TextOptions.TextFormattingMode="Ideal"
+             Background="Transparent">
+
+    <UserControl.DataContext>
+        <viewmodels:ReportsViewModel />
+    </UserControl.DataContext>
+
+    <Grid Margin="30,20,30,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header Area -->
+        <Grid Grid.Row="0" Margin="0,0,0,25">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Financial Intelligence" FontSize="28" FontWeight="Bold" Foreground="White" />
+                <TextBlock Text="COMPREHENSIVE TRANSACTION OVERVIEW • REVENUE ANALYTICS" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,0" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <materialDesign:Card Width="300" Height="40" UniformCornerRadius="8" Background="{DynamicResource SurfaceContainerLowestBrush}" Margin="0,0,15,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0.5"/>
+                        <TextBox Grid.Column="1" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                                 materialDesign:TextFieldAssist.DecorationVisibility="Collapsed" 
+                                 materialDesign:HintAssist.Hint="Search ID or Guest..."
+                                 BorderThickness="0" 
+                                 VerticalAlignment="Center" Background="Transparent" Foreground="White" FontSize="13">
+                        </TextBox>
+                    </Grid>
+                </materialDesign:Card>
+
+                <Button Content="EXPORT CSV" Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#353535" Foreground="White" Height="40" Padding="20,0" materialDesign:ButtonAssist.CornerRadius="6" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Summary Cards -->
+        <Grid Grid.Row="1" Margin="0,0,0,25">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Total Revenue Card -->
+            <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#252525">
+                <StackPanel>
+                    <TextBlock Text="TOTAL REVENUE" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding TotalRevenue}" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource SuccessGreenBrush}" Margin="0,10,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Transaction Count Card -->
+            <Border Grid.Column="2" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#252525">
+                <StackPanel>
+                    <TextBlock Text="TRANSACTIONS" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="{Binding TransactionCount}" FontSize="32" FontWeight="Bold" Foreground="White" Margin="0,10,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- System Info Card -->
+            <Border Grid.Column="4" Background="Transparent" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#353535">
+                <StackPanel>
+                    <TextBlock Text="FISCAL YEAR" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    <TextBlock Text="FY 2026/27" FontSize="32" FontWeight="Bold" Foreground="White" Margin="0,10,0,0"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Transaction Data Grid -->
+        <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" BorderThickness="1" BorderBrush="#252525">
+            <DataGrid ItemsSource="{Binding ReportData}"
+                      AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column"
+                      SelectionMode="Single" SelectionUnit="FullRow"
+                      BorderThickness="0" Background="Transparent" Margin="15" RowHeight="60">
+
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                        <Setter Property="FontSize" Value="11"/>
+                        <Setter Property="Padding" Value="10,0,10,15"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="TRANSACTION ID" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding PaymentId}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="10,0"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="GUEST NAME" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
+                                    <Ellipse Width="32" Height="32" Fill="#1A82ABFF" Margin="0,0,12,0"/>
+                                    <TextBlock Text="{Binding GuestName}" FontWeight="Bold" FontSize="14" Foreground="White" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="DATE" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Date, StringFormat=MMM dd\, yyyy}" FontWeight="SemiBold" FontSize="14" Foreground="White" VerticalAlignment="Center" Margin="10,0"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="METHOD" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Background="#15FFFFFF" CornerRadius="4" Padding="8,2" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Method}" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="AMOUNT" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Amount, StringFormat=${0:N2}}" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource SuccessGreenBrush}" VerticalAlignment="Center" Margin="10,0" HorizontalAlignment="Right"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Grid>
+</UserControl>

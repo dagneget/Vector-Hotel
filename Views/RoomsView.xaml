@@ -1,0 +1,211 @@
+<UserControl x:Class="HRS.Views.RoomsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewmodels="clr-namespace:HRS.ViewModels"
+             TextElement.Foreground="{DynamicResource TextPrimaryBrush}"
+             TextOptions.TextFormattingMode="Ideal"
+             Background="Transparent">
+
+    <UserControl.DataContext>
+        <viewmodels:RoomsViewModel />
+    </UserControl.DataContext>
+
+    <Grid Margin="30,20,30,20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        
+        <!-- Left Side: Header & Grid -->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Header Area -->
+            <Grid Grid.Row="0" Margin="0,0,0,25">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Room Fleet" FontSize="28" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="MANAGE INVENTORY • HOUSEKEEPING STATUS • MAINTENANCE" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,0" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <materialDesign:Card Width="280" Height="40" UniformCornerRadius="8" Background="{DynamicResource SurfaceContainerLowestBrush}" Margin="0,0,15,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="40" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0.5"/>
+                            <TextBox Grid.Column="1" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                                     materialDesign:TextFieldAssist.DecorationVisibility="Collapsed" 
+                                     materialDesign:HintAssist.Hint="Search Room #..."
+                                     BorderThickness="0" 
+                                     VerticalAlignment="Center" Background="Transparent" Foreground="White" FontSize="13">
+                            </TextBox>
+                        </Grid>
+                    </materialDesign:Card>
+
+                    <Button Content="+ REGISTER ROOM" Background="{DynamicResource NocturnalAccentBrush}" Foreground="#111111" FontWeight="Bold"
+                            BorderThickness="0" Height="40" Padding="20,0" materialDesign:ButtonAssist.CornerRadius="6"
+                            Command="{Binding RegisterRoomCommand}" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Data Grid -->
+            <Border Grid.Row="1" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" BorderThickness="1" BorderBrush="#252525">
+                <DataGrid ItemsSource="{Binding Rooms}" SelectedItem="{Binding SelectedRoom}"
+                          AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column"
+                          SelectionMode="Single" SelectionUnit="FullRow"
+                          BorderThickness="0" Background="Transparent" Margin="15" RowHeight="60">
+
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            <Setter Property="FontSize" Value="11"/>
+                            <Setter Property="Padding" Value="10,0,10,15"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Margin" Value="0,0,0,6" />
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#15FFFFFF" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="ROOM #" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding RoomNumber}" FontWeight="Bold" FontSize="15" Foreground="White" VerticalAlignment="Center" Margin="10,0"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="LEVEL / FLOOR" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel VerticalAlignment="Center" Margin="10,0">
+                                        <TextBlock Text="{Binding FloorNumber, StringFormat='Level {0}'}" FontWeight="SemiBold" FontSize="14" Foreground="White"/>
+                                        <TextBlock Text="HOTEL PREMISES" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="ROOM TIER" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel VerticalAlignment="Center" Margin="10,0">
+                                        <TextBlock Text="{Binding CategoryName}" FontWeight="SemiBold" FontSize="14" Foreground="White"/>
+                                        <TextBlock Text="{Binding BasePrice, StringFormat=Starting at ${0:N0}/night}" FontSize="10" Foreground="{DynamicResource SuccessGreenBrush}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="CONDITION" Width="150">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
+                                        <Ellipse Width="8" Height="8" Margin="0,0,10,0">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Fill" Value="{DynamicResource SuccessGreenBrush}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding CleanStatus}" Value="Dirty">
+                                                            <Setter Property="Fill" Value="{DynamicResource DangerRedBrush}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding CleanStatus}" Value="Maintenance">
+                                                            <Setter Property="Fill" Value="#FFFF9800" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+                                        <TextBlock Text="{Binding CleanStatus}" FontWeight="SemiBold" FontSize="13" Foreground="White">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding CleanStatus}" Value="Dirty">
+                                                            <Setter Property="Foreground" Value="{DynamicResource DangerRedBrush}" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding CleanStatus}" Value="Maintenance">
+                                                            <Setter Property="Foreground" Value="#FFFF9800" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="STATE" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#353535" BorderThickness="1" CornerRadius="10" Padding="10,4" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Status}" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Grid>
+
+        <!-- Right Side: Edit Form Overlay -->
+        <Border Grid.Column="1" Width="350" Background="{DynamicResource SidebarBackgroundBrush}" 
+                Margin="30,0,0,0" CornerRadius="16" BorderThickness="1" BorderBrush="#252525"
+                Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid Margin="25">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Room Specifics" FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,0,0,30" />
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <!-- Room # -->
+                        <TextBlock Text="ROOM CODE / NUMBER" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,8" />
+                        <TextBox Text="{Binding FormRoomNumber}" Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,20" Padding="12" />
+
+                        <!-- Floor -->
+                        <TextBlock Text="FLOOR LEVEL" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,8" />
+                        <TextBox Text="{Binding FormFloor}" Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,20" Padding="12" />
+
+                        <!-- Type -->
+                        <TextBlock Text="ROOM TIER" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,8" />
+                        <ComboBox ItemsSource="{Binding RoomTypes}" SelectedItem="{Binding FormSelectedType}" DisplayMemberPath="Name"
+                                  Style="{StaticResource MaterialDesignOutlinedComboBox}" Margin="0,0,0,20" Padding="12" />
+
+                        <!-- Clean Status -->
+                        <TextBlock Text="HOUSEKEEPING STATE" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,8" />
+                        <ComboBox ItemsSource="{Binding CleanStatusOptions}" SelectedItem="{Binding FormCleanStatus}"
+                                  Style="{StaticResource MaterialDesignOutlinedComboBox}" Margin="0,0,0,20" Padding="12" />
+                    </StackPanel>
+                </ScrollViewer>
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                    <Button Content="DELETE" Command="{Binding DeleteRoomCommand}" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource DangerRedBrush}" Margin="0,0,30,0" />
+                    <Button Content="CANCEL" Command="{Binding CancelEditCommand}" Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#353535" Foreground="White" Margin="0,0,10,0" />
+                    <Button Content="SAVE" Command="{Binding SaveCommand}" Style="{StaticResource MaterialDesignRaisedButton}" Background="{DynamicResource NocturnalAccentBrush}" Foreground="#111111" FontWeight="Bold" BorderThickness="0" Width="100" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
