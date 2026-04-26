@@ -27,7 +27,7 @@
             <!-- Top Header Area -->
             <Grid Grid.Row="0" Margin="0,0,0,30">
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="Billing &amp; Folios" FontSize="28" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="Billing &amp; Folios" FontSize="28" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" />
                     <TextBlock Text="PROCESS OUTSTANDING BILLS • TRANSACTION LOGS • INVOICES" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,0" />
                 </StackPanel>
 
@@ -43,14 +43,14 @@
                                      materialDesign:TextFieldAssist.DecorationVisibility="Collapsed" 
                                      materialDesign:HintAssist.Hint="Search Guest / Room..."
                                      BorderThickness="0" 
-                                     VerticalAlignment="Center" Background="Transparent" Foreground="White" FontSize="13" />
+                                     VerticalAlignment="Center" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13" />
                         </Grid>
                     </materialDesign:Card>
                 </StackPanel>
             </Grid>
 
             <!-- Data Grid -->
-            <Border Grid.Row="1" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" BorderThickness="1" BorderBrush="#252525">
+            <Border Grid.Row="1" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}">
                 <Grid>
                     <DataGrid ItemsSource="{Binding Folios}" SelectedItem="{Binding SelectedFolio}"
                               AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column"
@@ -83,11 +83,11 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
-                                            <Border Width="42" Height="42" Background="#22FFFFFF" CornerRadius="8" Margin="0,0,15,0">
+                                            <Border Width="42" Height="42" Background="{DynamicResource DividerBrush}" CornerRadius="8" Margin="0,0,15,0">
                                                 <materialDesign:PackIcon Kind="Receipt" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0.7"/>
                                             </Border>
                                             <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding GuestName}" FontWeight="Bold" FontSize="15" Foreground="White"/>
+                                                <TextBlock Text="{Binding GuestName}" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                                 <TextBlock Text="{Binding ReservationId, StringFormat=FOLIO: {0}}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
                                             </StackPanel>
                                         </StackPanel>
@@ -98,7 +98,7 @@
                             <DataGridTemplateColumn Header="ROOM" Width="120">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding RoomNumber}" FontWeight="SemiBold" FontSize="14" Foreground="White" VerticalAlignment="Center" Margin="10,0"/>
+                                        <TextBlock Text="{Binding RoomNumber}" FontWeight="SemiBold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" Margin="10,0"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -114,7 +114,7 @@
                             <DataGridTemplateColumn Header="BALANCE DUE" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding BalanceDue, StringFormat=${0:N2}}" FontWeight="Bold" FontSize="18" Foreground="White" VerticalAlignment="Center" Margin="10,0" HorizontalAlignment="Right"/>
+                                        <TextBlock Text="{Binding BalanceDue, StringFormat=${0:N2}}" FontWeight="Bold" FontSize="18" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" Margin="10,0" HorizontalAlignment="Right"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -126,7 +126,7 @@
 
         <!-- Right Slide-out Detail Panel: Folio View -->
         <Border Grid.Column="1" HorizontalAlignment="Right" Background="{DynamicResource CardBackgroundBrush}" 
-                CornerRadius="12" BorderThickness="1" BorderBrush="#252525"
+                CornerRadius="12" BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}"
                 Width="480" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid>
                 <Grid.RowDefinitions>
@@ -136,11 +136,11 @@
                 </Grid.RowDefinitions>
 
                 <!-- Panel Header -->
-                <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="#252525" Padding="20">
+                <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource DividerBrush}" Padding="20">
                     <StackPanel>
                         <Grid>
-                            <TextBlock Text="Guest Folio" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Left"/>
-                            <TextBlock Text="{Binding SelectedFolio.ReservationId}" FontSize="12" Foreground="Gray" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                            <TextBlock Text="Guest Folio" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Left"/>
+                            <TextBlock Text="{Binding SelectedFolio.ReservationId}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                         </Grid>
                         <TextBlock Text="{Binding SelectedFolio.GuestName}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource NocturnalAccentBrush}" Margin="0,4,0,0"/>
                     </StackPanel>
@@ -173,17 +173,17 @@
                                     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                                     <Style.Triggers>
                                         <Trigger Property="IsSelected" Value="True">
-                                            <Setter Property="Background" Value="#22FFFFFF" />
+                                            <Setter Property="Background" Value="{DynamicResource CardHoverBrush}" />
                                         </Trigger>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#11FFFFFF" />
+                                            <Setter Property="Background" Value="{DynamicResource CardHoverBrush}" />
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
                             </ListBox.ItemContainerStyle>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <Border BorderThickness="0,0,0,1" BorderBrush="#15FFFFFF" Padding="0,12">
+                                    <Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource DividerBrush}" Padding="0,12">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="2*" />
@@ -191,11 +191,11 @@
                                                 <ColumnDefinition Width="1*" />
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Grid.Column="0">
-                                                <TextBlock Text="{Binding Description}" FontSize="13" Foreground="White" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding Description}" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap"/>
                                                 <TextBlock Text="{Binding Status}" FontSize="9" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0" Visibility="{Binding IsPayment, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                             </StackPanel>
-                                            <TextBlock Grid.Column="1" Text="{Binding Date, StringFormat=MMM dd}" FontSize="12" Foreground="Gray" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="2" Text="{Binding Amount, StringFormat=${0:N2}}" FontSize="13" FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Date, StringFormat=MMM dd}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding Amount, StringFormat=${0:N2}}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -206,21 +206,21 @@
                 </ScrollViewer>
 
                 <!-- Action Footer & Summary -->
-                <Border Grid.Row="2" Background="#15000000" CornerRadius="0,0,12,12" Padding="20">
+                <Border Grid.Row="2" Background="{DynamicResource BadgeBackgroundBrush}" CornerRadius="0,0,12,12" Padding="20">
                     <StackPanel>
                         <!-- Totals -->
                         <StackPanel Margin="0,0,0,20">
                             <Grid Margin="0,0,0,5">
-                                <TextBlock Text="Total Charges:" FontSize="13" Foreground="Gray" />
-                                <TextBlock Text="{Binding SelectedFolio.TotalCharges, StringFormat=${0:N2}}" FontSize="13" Foreground="White" HorizontalAlignment="Right" />
+                                <TextBlock Text="Total Charges:" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                <TextBlock Text="{Binding SelectedFolio.TotalCharges, StringFormat=${0:N2}}" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Right" />
                             </Grid>
                             <Grid Margin="0,0,0,10">
-                                <TextBlock Text="Payments Received:" FontSize="13" Foreground="Gray" />
-                                <TextBlock Text="{Binding SelectedFolio.TotalPayments, StringFormat=-${0:N2}}" FontSize="13" Foreground="White" HorizontalAlignment="Right" />
+                                <TextBlock Text="Payments Received:" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                <TextBlock Text="{Binding SelectedFolio.TotalPayments, StringFormat=-${0:N2}}" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Right" />
                             </Grid>
-                            <Separator Background="#252525" Margin="0,5"/>
+                            <Separator Background="{DynamicResource DividerBrush}" Margin="0,5"/>
                             <Grid Margin="0,5,0,0">
-                                <TextBlock Text="Balance Due" FontSize="16" FontWeight="SemiBold" Foreground="White" />
+                                <TextBlock Text="Balance Due" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
                                 <TextBlock Text="{Binding FolioBalanceDue, StringFormat=${0:N2}}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource SuccessGreenBrush}" HorizontalAlignment="Right" />
                             </Grid>
                         </StackPanel>
@@ -229,15 +229,18 @@
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10" Visibility="{Binding IsAccountant, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <Button Content="VERIFY PAYMENT" Command="{Binding VerifyPaymentCommand}" 
                                     Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="{DynamicResource NocturnalAccentBrush}" BorderBrush="{DynamicResource NocturnalAccentBrush}" Margin="0,0,10,0"/>
+                            
+                            <Button Content="DOWNLOAD RECEIPT" Command="{Binding DownloadReceiptCommand}" 
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource DividerBrush}" Margin="0,0,10,0"/>
                                     
                             <Button Content="GENERATE INVOICE" Command="{Binding GenerateInvoiceCommand}"
-                                    Style="{StaticResource MaterialDesignRaisedButton}" Background="#2A2A2A" Foreground="White"
+                                    Style="{StaticResource MaterialDesignRaisedButton}" Background="{DynamicResource CardHoverBrush}" Foreground="{DynamicResource TextPrimaryBrush}"
                                     BorderThickness="0" Height="36" materialDesign:ButtonAssist.CornerRadius="6" />
                         </StackPanel>
                         
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button Content="CANCEL" Command="{Binding CancelEditCommand}" 
-                                    Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Margin="0,0,15,0"/>
+                                    Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,15,0"/>
                                     
                             <Button Content="PAY BY CASH" Command="{Binding PayCashCommand}"
                                     Style="{StaticResource MaterialDesignRaisedButton}" Background="#114D1A" Foreground="{DynamicResource SuccessGreenBrush}" FontWeight="Bold"

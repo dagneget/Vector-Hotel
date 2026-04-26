@@ -17,11 +17,9 @@ namespace HRS.ViewModels
         public string RoomNumber { get; set; }
         public DateTime CheckInDate => BaseReservation.CheckIn;
         public DateTime CheckOutDate => BaseReservation.CheckOut;
-        public string ReservationStatus => BaseReservation.Status;
-        public decimal TotalPrice => BaseReservation.TotalPrice;
-        
-        // Mock payment status based on whether it is confirmed
-        public string PaymentStatus => BaseReservation.Status == "CheckedIn" || BaseReservation.Status == "CheckedOut" ? "Paid" : (BaseReservation.Status == "Confirmed" ? "Paid" : "Pending");
+        public string ReservationStatus => BaseReservation.RoomStatus ?? "None";
+        public string PaymentStatus => BaseReservation.PaymentStatus ?? "Pending";
+        public decimal TotalPrice => BaseReservation != null ? BaseReservation.TotalPrice : 0;
     }
 
     public class ReservationsViewModel : ViewModelBase
@@ -48,20 +46,20 @@ namespace HRS.ViewModels
         {
             get {
                 var revenue = DataStore.Data.Reservations
-                    .Where(r => r.CheckIn.Date == DateTime.Today || (r.Status == "CheckedIn"))
+                    .Where(r => r.CheckIn.Date == DateTime.Today || r.RoomStatus == "CheckedIn")
                     .Sum(r => r.TotalPrice);
                 if (revenue >= 1000) return $"${(revenue / 1000m):F1}k";
                 return $"${revenue:F0}";
             }
         }
         public string DailyRevTrend => "";
-        public string PendingCount => DataStore.Data.Reservations.Count(r => r.Status == "Pending").ToString();
+        public string PendingCount => DataStore.Data.Reservations.Count(r => r.PaymentStatus == "Pending").ToString();
         
         public string SummaryText 
         {
             get {
                 int arriving = DataStore.Data.Reservations.Count(r => r.CheckIn.Date == DateTime.Today);
-                int pending = DataStore.Data.Reservations.Count(r => r.Status == "Pending");
+                int pending = DataStore.Data.Reservations.Count(r => r.PaymentStatus == "Pending");
                 return $"{arriving} GUESTS ARRIVING TODAY • {pending} PENDING ACTIONS";
             }
         }
@@ -99,7 +97,17 @@ namespace HRS.ViewModels
                 if (SetProperty(ref _selectedReservation, value))
                 {
                     IsEditing = value != null;
-                    if (value != null) PopulateForm(value);
+                    if (value != null)
+                    {
+                        try
+                        {
+                            PopulateForm(value);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Error loading reservation: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
                 }
             }
         }
@@ -174,7 +182,17 @@ namespace HRS.ViewModels
         }
 
         private RoomModel _formSelectedRoom;
-        public RoomModel FormSelectedRoom { get => _formSelectedRoom; set => SetProperty(ref _formSelectedRoom, value); }
+        public RoomModel FormSelectedRoom 
+        { 
+            get => _formSelectedRoom; 
+            set 
+            { 
+                if (SetProperty(ref _formSelectedRoom, value))
+                {
+                    CalculatePrice();
+                }
+            } 
+        }
 
         private DateTime _formCheckInDate;
         public DateTime FormCheckInDate
@@ -182,7 +200,12 @@ namespace HRS.ViewModels
             get => _formCheckInDate;
             set
             {
-                if (SetProperty(ref _formCheckInDate, value)) { UpdateAvailableRooms(); CalculatePrice(); }
+                if (SetProperty(ref _formCheckInDate, value)) 
+                { 
+                    OnPropertyChanged(nameof(FormCheckInDatePlusOne));
+                    UpdateAvailableRooms(); 
+                    CalculatePrice(); 
+                }
             }
         }
 
@@ -205,10 +228,34 @@ namespace HRS.ViewModels
         private string _formNotes;
         public string FormNotes { get => _formNotes; set => SetProperty(ref _formNotes, value); }
 
-        private string _formStatus;
-        public string FormStatus { get => _formStatus; set => SetProperty(ref _formStatus, value); }
+        private string _formPaymentStatus;
+        public string FormPaymentStatus { get => _formPaymentStatus; set => SetProperty(ref _formPaymentStatus, value); }
 
-        public string[] StatusOptions => new[] { "Pending", "Confirmed", "CheckedIn", "CheckedOut", "Cancelled" };
+        private string _formRoomStatus;
+        public string FormRoomStatus 
+        { 
+            get => _formRoomStatus; 
+            set 
+            { 
+                if (SetProperty(ref _formRoomStatus, value))
+                {
+                    if (value == "CheckedOut" && FormCheckOutDate > DateTime.Today && FormCheckInDate <= DateTime.Today)
+                    {
+                        FormCheckOutDate = DateTime.Today == FormCheckInDate ? DateTime.Today.AddDays(1) : DateTime.Today;
+                    }
+                    else if (value == "Cancelled")
+                    {
+                        FormTotalPrice = 0;
+                    }
+                }
+            } 
+        }
+
+        public string[] PaymentStatusOptions => new[] { "Pending", "Confirmed" };
+        public string[] RoomStatusOptions => new[] { "None", "CheckedIn", "CheckedOut", "Cancelled" };
+
+        public DateTime TodayDate => DateTime.Today;
+        public DateTime FormCheckInDatePlusOne => FormCheckInDate.Date >= DateTime.Today ? FormCheckInDate.Date.AddDays(1) : DateTime.Today.AddDays(1);
 
         public ICommand NewReservationCommand { get; }
         public ICommand SaveCommand { get; }
@@ -256,13 +303,14 @@ namespace HRS.ViewModels
                     r.CustomerName.ToLower().Contains(s) ||
                     r.RoomNumber.ToLower().Contains(s) ||
                     r.ReservationStatus.ToLower().Contains(s) ||
+                    r.PaymentStatus.ToLower().Contains(s) ||
                     r.BaseReservation.Id.Contains(s));
             }
 
             if (CurrentSegment == "Arrivals")
                 query = query.Where(r => r.BaseReservation.CheckIn.Date == DateTime.Today);
             else if (CurrentSegment == "InHouse")
-                query = query.Where(r => r.BaseReservation.Status == "CheckedIn");
+                query = query.Where(r => r.BaseReservation.RoomStatus == "CheckedIn");
             else if (CurrentSegment == "Departures")
                 query = query.Where(r => r.BaseReservation.CheckOut.Date == DateTime.Today);
 
@@ -308,7 +356,7 @@ namespace HRS.ViewModels
 
         private void CalculatePrice()
         {
-            if (FormSelectedRoomType == null || FormCheckInDate >= FormCheckOutDate)
+            if (FormCheckInDate >= FormCheckOutDate)
             {
                 FormTotalPrice = 0;
                 return;
@@ -316,7 +364,24 @@ namespace HRS.ViewModels
 
             int days = (int)(FormCheckOutDate.Date - FormCheckInDate.Date).TotalDays;
             if (days <= 0) days = 1;
-            FormTotalPrice = FormSelectedRoomType.BasePrice * days;
+
+            if (FormSelectedRoom != null)
+            {
+                FormTotalPrice = FormSelectedRoom.BasePricePerNight * days;
+            }
+            else if (FormSelectedRoomType != null)
+            {
+                FormTotalPrice = FormSelectedRoomType.BasePrice * days;
+            }
+            else
+            {
+                FormTotalPrice = 0;
+            }
+        }
+
+        public void TriggerNewReservation()
+        {
+            CreateNew();
         }
 
         private void CreateNew()
@@ -332,7 +397,8 @@ namespace HRS.ViewModels
             
             FormAdultsCount = 1;
             FormNotes = "";
-            FormStatus = "Pending";
+            FormPaymentStatus = "Pending";
+            FormRoomStatus = "None";
             FormTotalPrice = 0;
             IsEditing = true;
         }
@@ -356,14 +422,27 @@ namespace HRS.ViewModels
             FormAdultsCount = r.AdultsCount;
             FormTotalPrice = r.TotalPrice;
             FormNotes = r.Notes ?? "";
-            FormStatus = r.Status;
+            FormPaymentStatus = r.PaymentStatus ?? "Pending";
+            FormRoomStatus = r.RoomStatus ?? "None";
         }
 
         private async void Save()
         {
-            if (FormSelectedCustomer == null || FormSelectedRoom == null || FormCheckInDate >= FormCheckOutDate)
+            if (FormCheckInDate.Date < DateTime.Today)
             {
-                MessageBox.Show("Please complete all required fields correctly. Ensure checkout is after check-in.");
+                MessageBox.Show("Check-in date cannot be in the past.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (FormCheckOutDate.Date <= FormCheckInDate.Date)
+            {
+                MessageBox.Show("Check-out date must be after the check-in date.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (FormSelectedCustomer == null || FormSelectedRoom == null)
+            {
+                MessageBox.Show("Please complete all required fields correctly.");
                 return;
             }
 
@@ -383,7 +462,8 @@ namespace HRS.ViewModels
             r.AdultsCount = FormAdultsCount;
             r.TotalPrice = FormTotalPrice;
             r.Notes = FormNotes;
-            r.Status = FormStatus;
+            r.PaymentStatus = FormPaymentStatus;
+            r.RoomStatus = FormRoomStatus == "None" ? null : FormRoomStatus;
             r.LastModified = DateTime.Now;
 
             try 

@@ -1,0 +1,82 @@
+<Window x:Class="HRS.Views.ProfileWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:viewmodels="clr-namespace:HRS.ViewModels"
+        Title="My Profile Management" Height="500" Width="450"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize">
+
+    <Window.DataContext>
+        <viewmodels:ProfileViewModel />
+    </Window.DataContext>
+
+    <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="16" BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}">
+        <Grid Margin="30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Grid Grid.Row="0" Margin="0,0,0,25">
+                <StackPanel>
+                    <TextBlock Text="PROFILE MANAGEMENT" FontSize="20" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" />
+                    <TextBlock Text="View security credentials and update credentials" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0" />
+                </StackPanel>
+                <Button Style="{StaticResource MaterialDesignIconButton}" HorizontalAlignment="Right" VerticalAlignment="Top" Click="Close_Click">
+                    <materialDesign:PackIcon Kind="Close" Foreground="{DynamicResource TextSecondaryBrush}" />
+                </Button>
+            </Grid>
+
+            <!-- Content -->
+            <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                
+                <!-- Readonly info -->
+                <Border Background="{DynamicResource SidebarBackgroundBrush}" CornerRadius="12" Padding="20" Margin="0,0,0,25" BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <Border Width="50" Height="50" CornerRadius="12" Background="{DynamicResource LuminousAccentBrush}">
+                            <TextBlock Text="{Binding Username[0]}" Foreground="White" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        
+                        <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Username}" FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" />
+                            <TextBlock Text="{Binding Role}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource SuccessGreenBrush}" Margin="0,2,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Update Password Section -->
+                <TextBlock Text="UPDATE PASSWORD" FontSize="11" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,15" />
+                
+                <PasswordBox x:Name="CurrentPasswordBox" materialDesign:HintAssist.Hint="Current Password" Style="{StaticResource MaterialDesignFilledPasswordBox}" Margin="0,0,0,12" Background="{DynamicResource SidebarBackgroundBrush}" />
+                
+                <PasswordBox x:Name="NewPasswordBox" materialDesign:HintAssist.Hint="New Password" Style="{StaticResource MaterialDesignFilledPasswordBox}" Margin="0,0,0,12" Background="{DynamicResource SidebarBackgroundBrush}" />
+                
+                <PasswordBox x:Name="ConfirmPasswordBox" materialDesign:HintAssist.Hint="Confirm New Password" Style="{StaticResource MaterialDesignFilledPasswordBox}" Margin="0,0,0,10" Background="{DynamicResource SidebarBackgroundBrush}" />
+
+            </StackPanel>
+
+            <!-- Actions -->
+            <Grid Grid.Row="2" Margin="0,15,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <Button Grid.Column="0" Content="CANCEL" Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="{DynamicResource TextSecondaryBrush}" BorderBrush="{DynamicResource DividerBrush}" Margin="0,0,10,0" Click="Close_Click" />
+                
+                <Button Grid.Column="1" Content="SAVE CHANGES" Style="{StaticResource MaterialDesignFlatButton}" Background="{DynamicResource LuminousAccentBrush}" Foreground="Black" FontWeight="Bold" Click="Save_Click" />
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

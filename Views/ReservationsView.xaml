@@ -11,14 +11,14 @@
         <viewmodels:ReservationsViewModel />
     </UserControl.DataContext>
 
-    <Grid Margin="30,20,30,20">
+    <Grid Margin="30,25">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <!-- Main Left Block (List & Metrics) -->
-        <Grid Grid.Column="0" Margin="0,0,20,0">
+        <Grid Grid.Column="0" Margin="0,0,25,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" /> <!-- Header Text -->
                 <RowDefinition Height="Auto" /> <!-- Metric Cards -->
@@ -26,143 +26,134 @@
             </Grid.RowDefinitions>
 
             <!-- Top Header Area -->
-            <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid Grid.Row="0" Margin="0,0,0,25">
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="Reservations" FontSize="28" FontWeight="Bold" Foreground="White" />
-                    <TextBlock Text="{Binding SummaryText}" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,0" />
+                    <TextBlock Text="Reservations" FontSize="32" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" />
+                    <TextBlock Text="{Binding SummaryText}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,0" Opacity="0.8" />
                 </StackPanel>
                 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Border Background="#181818" CornerRadius="8" Height="40" Margin="0,0,15,0">
+                    <Border Background="{DynamicResource SidebarBackgroundBrush}" CornerRadius="12" Height="45" Margin="0,0,15,0" BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}">
                         <StackPanel Orientation="Horizontal" Margin="15,0">
-                            <materialDesign:PackIcon Kind="Magnify" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Width="18" Height="18" Margin="0,0,10,0"/>
-                            <TextBox BorderThickness="0" Background="Transparent" Foreground="White" Width="200" VerticalAlignment="Center" FontSize="14" materialDesign:HintAssist.Hint="Global Search..." Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                            <materialDesign:PackIcon Kind="Magnify" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Width="20" Height="20" Margin="0,0,10,0"/>
+                            <TextBox BorderThickness="0" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" Width="250" VerticalAlignment="Center" FontSize="14" materialDesign:HintAssist.Hint="Filter by guest or room..." Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Border>
                     
-                    <Button Content="+ NEW BOOKING" 
-                            Background="{DynamicResource NocturnalAccentBrush}" Foreground="#111111" FontWeight="Bold"
-                            BorderThickness="0" Height="40" Padding="20,0" materialDesign:ButtonAssist.CornerRadius="6"
-                            Command="{Binding NewReservationCommand}" />
+                    <Button Command="{Binding NewReservationCommand}" 
+                            Background="{DynamicResource LuminousAccentBrush}" Foreground="White" FontWeight="Black"
+                            BorderThickness="0" Height="45" Padding="25,0" materialDesign:ButtonAssist.CornerRadius="12">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Plus" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="NEW BOOKING" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Grid>
 
             <!-- Metrics Cards -->
-            <Grid Grid.Row="1" Margin="0,0,0,25">
+            <Grid Grid.Row="1" Margin="0,0,0,30">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="15" />
+                    <ColumnDefinition Width="20" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="15" />
+                    <ColumnDefinition Width="20" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="15" />
+                    <ColumnDefinition Width="20" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#252525">
+                <Border Grid.Column="0" Style="{StaticResource LuminousCardStyle}">
                     <StackPanel>
-                        <TextBlock Text="OCCUPANCY" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                        <Grid Margin="0,15,0,0">
-                            <TextBlock Text="{Binding OccupancyText}" FontSize="36" FontWeight="Bold" Foreground="White" />
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,5">
-                                <materialDesign:PackIcon Kind="TrendingUp" Foreground="{DynamicResource SuccessGreenBrush}" Width="16" Height="16" VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding OccupancyTrend}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource SuccessGreenBrush}" Margin="2,0,0,0" VerticalAlignment="Center" />
-                            </StackPanel>
+                        <TextBlock Text="OCCUPANCY" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                        <Grid Margin="0,12,0,0">
+                            <TextBlock Text="{Binding OccupancyText}" FontSize="34" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" />
+                            <materialDesign:PackIcon Kind="Bed" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource LuminousAccentBrush}" Opacity="0.2" Width="30" Height="30"/>
                         </Grid>
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Column="2" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#252525">
+                <Border Grid.Column="2" Style="{StaticResource LuminousCardStyle}">
                     <StackPanel>
-                        <TextBlock Text="DAILY REV" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                        <Grid Margin="0,15,0,0">
-                            <TextBlock Text="{Binding DailyRevText}" FontSize="36" FontWeight="Bold" Foreground="White" />
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,5">
-                                <materialDesign:PackIcon Kind="TrendingUp" Foreground="{DynamicResource SuccessGreenBrush}" Width="16" Height="16" VerticalAlignment="Center"/>
-                                <TextBlock Text="{Binding DailyRevTrend}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource SuccessGreenBrush}" Margin="2,0,0,0" VerticalAlignment="Center" />
-                            </StackPanel>
+                        <TextBlock Text="DAILY REVENUE" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                        <Grid Margin="0,12,0,0">
+                            <TextBlock Text="{Binding DailyRevText}" FontSize="34" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" />
+                            <materialDesign:PackIcon Kind="Cash" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource SuccessGreenBrush}" Opacity="0.2" Width="30" Height="30"/>
                         </Grid>
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Column="4" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#252525">
+                <Border Grid.Column="4" Style="{StaticResource LuminousCardStyle}">
                     <StackPanel>
-                        <TextBlock Text="PENDING" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                        <Grid Margin="0,15,0,0">
-                            <TextBlock Text="{Binding PendingCount}" FontSize="36" FontWeight="Bold" Foreground="White" />
-                            <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="#33FF4B4B" CornerRadius="4" Padding="6,2" Margin="0,0,0,5">
-                                <TextBlock Text="URGENT" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource DangerRedBrush}" />
-                            </Border>
+                        <TextBlock Text="PENDING ACTIONS" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                        <Grid Margin="0,12,0,0">
+                            <TextBlock Text="{Binding PendingCount}" FontSize="34" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" />
+                            <Grid HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <Border Background="{DynamicResource DangerRedBrush}" Opacity="0.1" CornerRadius="6" />
+                                <TextBlock Text="URGENT" FontSize="10" FontWeight="Black" Foreground="{DynamicResource DangerRedBrush}" Padding="8,4" />
+                            </Grid>
                         </Grid>
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Column="6" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#353535">
+                <Border Grid.Column="6" CornerRadius="15" Padding="20" BorderThickness="1" BorderBrush="{DynamicResource LuminousAccentBrush}">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#1A1A1A" Offset="0" />
-                            <GradientStop Color="#252525" Offset="1" />
+                            <GradientStop Color="#F0F7FF" Offset="0" />
+                            <GradientStop Color="#FFFFFF" Offset="1" />
                         </LinearGradientBrush>
                     </Border.Background>
                     <StackPanel>
-                        <TextBlock Text="SYSTEM HEALTH" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                        <TextBlock Text="Cloud Sync Active" FontSize="18" FontWeight="SemiBold" Foreground="White" Margin="0,10,0,5" />
-                        <TextBlock Text="LAST UPDATED: 2M AGO" FontSize="10" Foreground="Gray" />
+                        <TextBlock Text="SYSTEM FEED" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource LuminousAccentBrush}" />
+                        <TextBlock Text="Cloud Optimized" FontSize="16" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,8,0,2" />
+                        <TextBlock Text="{Binding LastUpdatedText}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" FontWeight="Bold" />
                     </StackPanel>
                 </Border>
             </Grid>
 
-            <!-- Main Data Grid -->
-            <Border Grid.Row="2" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" BorderThickness="1" BorderBrush="#252525">
+            <!-- Main Data Table -->
+            <Border Grid.Row="2" Style="{StaticResource LuminousCardStyle}" Padding="0">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,15,20,5">
-                        <RadioButton Content="ALL BOOKINGS" Style="{StaticResource MaterialDesignTabRadioButton}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,15,0" IsChecked="True" Command="{Binding ChangeSegmentCommand}" CommandParameter="All"/>
-                        <RadioButton Content="TODAY'S ARRIVALS" Style="{StaticResource MaterialDesignTabRadioButton}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,15,0" Command="{Binding ChangeSegmentCommand}" CommandParameter="Arrivals"/>
-                        <RadioButton Content="IN-HOUSE GUESTS" Style="{StaticResource MaterialDesignTabRadioButton}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,15,0" Command="{Binding ChangeSegmentCommand}" CommandParameter="InHouse"/>
-                        <RadioButton Content="TODAY'S DEPARTURES" Style="{StaticResource MaterialDesignTabRadioButton}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,15,0" Command="{Binding ChangeSegmentCommand}" CommandParameter="Departures"/>
-                    </StackPanel>
+                    <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource DividerBrush}" Padding="20,10">
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton Content="ALL BOOKINGS" Style="{StaticResource MaterialDesignTabRadioButton}" Margin="0,0,25,0" IsChecked="True" Command="{Binding ChangeSegmentCommand}" CommandParameter="All" FontSize="12" FontWeight="Bold"/>
+                            <RadioButton Content="ARRIVALS" Style="{StaticResource MaterialDesignTabRadioButton}" Margin="0,0,25,0" Command="{Binding ChangeSegmentCommand}" CommandParameter="Arrivals" FontSize="12" FontWeight="Bold"/>
+                            <RadioButton Content="IN-HOUSE" Style="{StaticResource MaterialDesignTabRadioButton}" Margin="0,0,25,0" Command="{Binding ChangeSegmentCommand}" CommandParameter="InHouse" FontSize="12" FontWeight="Bold"/>
+                            <RadioButton Content="DEPARTURES" Style="{StaticResource MaterialDesignTabRadioButton}" Command="{Binding ChangeSegmentCommand}" CommandParameter="Departures" FontSize="12" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Border>
 
                     <DataGrid Grid.Row="1" ItemsSource="{Binding Reservations}" SelectedItem="{Binding SelectedReservation}"
-                              AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column"
-                              SelectionMode="Single" SelectionUnit="FullRow"
-                              BorderThickness="0" Background="Transparent" Margin="15" RowHeight="60">
+                               AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column"
+                               SelectionMode="Single" SelectionUnit="FullRow"
+                               BorderThickness="0" Background="Transparent" Margin="20" RowHeight="75">
 
                         <DataGrid.ColumnHeaderStyle>
                             <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
                                 <Setter Property="Background" Value="Transparent"/>
                                 <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                                 <Setter Property="FontSize" Value="11"/>
-                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="FontWeight" Value="Black"/>
                                 <Setter Property="Padding" Value="10,0,10,15"/>
                             </Style>
                         </DataGrid.ColumnHeaderStyle>
 
-                        <DataGrid.RowStyle>
-                            <Style TargetType="DataGridRow">
-                                <Setter Property="Background" Value="Transparent" />
-                                <Setter Property="Margin" Value="0,0,0,6" />
-                                <Style.Triggers>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="#15FFFFFF" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataGrid.RowStyle>
-
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="GUEST NAME" Width="1.5*">
+                            <DataGridTemplateColumn Header="GUEST DETAIL" Width="2*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Margin="5,0">
-                                            <Ellipse Width="35" Height="35" Fill="#3382ABFF" Margin="0,0,15,0"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border Width="45" Height="45" CornerRadius="12" Background="{DynamicResource AppBackgroundBrush}" Margin="0,0,15,0">
+                                                <materialDesign:PackIcon Kind="Account" Foreground="{DynamicResource LuminousAccentBrush}" Width="22" Height="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
                                             <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding CustomerName}" FontWeight="Bold" FontSize="14" Foreground="White"/>
-                                                <TextBlock Text="MEMBER" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3,0,0"/>
+                                                <TextBlock Text="{Binding CustomerName}" FontWeight="Black" FontSize="15" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                <TextBlock Text="GOLD MEMBER" FontSize="10" Foreground="{DynamicResource LuminousAccentBrush}" FontWeight="Bold" Margin="0,3,0,0"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </DataTemplate>
@@ -172,41 +163,57 @@
                             <DataGridTemplateColumn Header="ROOM" Width="1*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <StackPanel VerticalAlignment="Center" Margin="5,0">
-                                            <TextBlock Text="{Binding RoomNumber}" FontWeight="SemiBold" FontSize="14" Foreground="White"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-
-                            <DataGridTemplateColumn Header="CHECK IN / OUT" Width="1.8*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel VerticalAlignment="Center" Margin="5,0">
-                                            <TextBlock FontWeight="SemiBold" FontSize="14" Foreground="White">
-                                                <Run Text="{Binding CheckInDate, Mode=OneWay, StringFormat=MMM dd}" />
-                                                <Run Text=" — " />
-                                                <Run Text="{Binding CheckOutDate, Mode=OneWay, StringFormat=MMM dd}" />
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-
-                            <DataGridTemplateColumn Header="STATUS" Width="1*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Border BorderBrush="{DynamicResource SuccessGreenBrush}" BorderThickness="1" CornerRadius="12" Padding="12,4" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding ReservationStatus}" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource SuccessGreenBrush}"/>
+                                        <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="10" Padding="12,6" HorizontalAlignment="Left">
+                                            <TextBlock Text="{Binding RoomNumber}" FontWeight="Black" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                         </Border>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Header="TOTAL" Width="1*">
+                            <DataGridTemplateColumn Header="PERIOD" Width="2*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding TotalPrice, StringFormat=C}" FontWeight="SemiBold" FontSize="14" Foreground="White" VerticalAlignment="Center"/>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock FontWeight="Black" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}">
+                                                <Run Text="{Binding CheckInDate, Mode=OneWay, StringFormat=MMM dd}" />
+                                                <Run Text=" ➔ " Foreground="{DynamicResource LuminousAccentBrush}"/>
+                                                <Run Text="{Binding CheckOutDate, Mode=OneWay, StringFormat=MMM dd}" />
+                                            </TextBlock>
+                                            <TextBlock Text="Nights: 3" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" FontWeight="Bold" Margin="0,3,0,0"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="PAYMENT" Width="1.2*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid HorizontalAlignment="Left">
+                                            <Border Background="{Binding PaymentStatus, Converter={StaticResource StatusToColorBrushConverter}}" Opacity="0.12" CornerRadius="10" />
+                                            <TextBlock Text="{Binding PaymentStatus}" FontSize="11" FontWeight="Black" Foreground="{Binding PaymentStatus, Converter={StaticResource StatusToColorBrushConverter}}" Padding="15,8" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="ROOM STATUS" Width="1.2*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid HorizontalAlignment="Left">
+                                            <Border Background="{Binding ReservationStatus, Converter={StaticResource StatusToColorBrushConverter}}" Opacity="0.12" CornerRadius="10" />
+                                            <TextBlock Text="{Binding ReservationStatus}" FontSize="11" FontWeight="Black" Foreground="{Binding ReservationStatus, Converter={StaticResource StatusToColorBrushConverter}}" Padding="15,8" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="TOTAL" Width="1.2*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,20,0">
+                                            <TextBlock Text="{Binding TotalPrice, StringFormat=C}" FontWeight="Black" FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <TextBlock Text="Finalized" FontSize="10" Foreground="{DynamicResource SuccessGreenBrush}" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,3,0,0"/>
+                                        </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -217,9 +224,12 @@
         </Grid>
 
         <!-- Right Slide-out Detail Panel -->
-        <Border Grid.Column="1" HorizontalAlignment="Right" Background="{DynamicResource CardBackgroundBrush}" 
-                CornerRadius="12" BorderThickness="1" BorderBrush="#252525"
-                Width="450" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Border Grid.Column="1" HorizontalAlignment="Right" Background="{DynamicResource SidebarBackgroundBrush}" 
+                CornerRadius="20" BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}"
+                Width="480" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="40" Color="Black" Opacity="0.1" ShadowDepth="0"/>
+            </Border.Effect>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -228,89 +238,107 @@
                 </Grid.RowDefinitions>
 
                 <!-- Panel Header -->
-                <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="#252525" Padding="20">
-                    <StackPanel>
-                        <TextBlock Text="Reservation Details" FontSize="20" FontWeight="Bold" Foreground="White"/>
-                        <TextBlock Text="Enter booking and room assignment info." FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0"/>
-                    </StackPanel>
+                <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource DividerBrush}" Padding="30">
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Text="Booking Manager" FontSize="24" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="ASSIGNMENT AND FINANCIALS" FontSize="10" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource MaterialDesignIconButton}" Command="{Binding CancelEditCommand}">
+                            <materialDesign:PackIcon Kind="Close" Foreground="{DynamicResource TextSecondaryBrush}" />
+                        </Button>
+                    </Grid>
                 </Border>
 
                 <!-- Scrollable Form -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel Margin="25,20">
-                        <TextBlock Text="Guest Information" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource NocturnalAccentBrush}" Margin="0,0,0,15"/>
+                    <StackPanel Margin="30,25">
+                        <TextBlock Text="GUEST CONFIGURATION" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,20" />
                         
                         <ComboBox ItemsSource="{Binding CustomersList}" SelectedItem="{Binding FormSelectedCustomer}" 
                                   DisplayMemberPath="FullName"
-                                  materialDesign:HintAssist.Hint="Type Name to Search Guest *" 
-                                  Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,0,0,25"
-                                  IsEditable="True" IsTextSearchEnabled="False"
+                                  materialDesign:HintAssist.Hint="Search or Select Guest" 
+                                  Style="{StaticResource MaterialDesignOutlinedComboBox}" Margin="0,0,0,30"
+                                  IsEditable="True" IsTextSearchEnabled="False" Height="55"
                                   Text="{Binding GuestSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <TextBlock Text="Stay Dates" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource NocturnalAccentBrush}" Margin="0,10,0,15"/>
+                        <TextBlock Text="STAY TIMELINE" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,10,0,20" />
 
-                        <Grid Margin="0,0,0,25">
+                        <Grid Margin="0,0,0,30">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="15" />
+                                <ColumnDefinition Width="20" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <DatePicker Grid.Column="0" SelectedDate="{Binding FormCheckInDate}" materialDesign:HintAssist.Hint="Check-In *" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
-                            <DatePicker Grid.Column="2" SelectedDate="{Binding FormCheckOutDate}" materialDesign:HintAssist.Hint="Check-Out *" Style="{StaticResource MaterialDesignFloatingHintDatePicker}" />
+                            <DatePicker Grid.Column="0" SelectedDate="{Binding FormCheckInDate}" materialDesign:HintAssist.Hint="Arrival Date" Style="{StaticResource MaterialDesignOutlinedDatePicker}" Height="55"/>
+                            <DatePicker Grid.Column="2" SelectedDate="{Binding FormCheckOutDate}" materialDesign:HintAssist.Hint="Departure Date" Style="{StaticResource MaterialDesignOutlinedDatePicker}" Height="55"/>
                         </Grid>
 
-                        <TextBlock Text="Room Assignment" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource NocturnalAccentBrush}" Margin="0,10,0,15"/>
+                        <TextBlock Text="ROOM ASSIGNMENT" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,10,0,20" />
                         
-                        <Grid Margin="0,0,0,25">
+                        <Grid Margin="0,0,0,30">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="15" />
+                                <ColumnDefinition Width="20" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <ComboBox Grid.Column="0" ItemsSource="{Binding RoomTypesList}" SelectedItem="{Binding FormSelectedRoomType}"
-                                      DisplayMemberPath="Name" materialDesign:HintAssist.Hint="Room Type *" Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
+                                      DisplayMemberPath="Name" materialDesign:HintAssist.Hint="Category" Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55"/>
                             
                             <ComboBox Grid.Column="2" ItemsSource="{Binding AvailableRoomsList}" SelectedItem="{Binding FormSelectedRoom}"
-                                      DisplayMemberPath="RoomNumber" materialDesign:HintAssist.Hint="Room Number *" Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
+                                      DisplayMemberPath="RoomNumber" materialDesign:HintAssist.Hint="Unit ID" Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55"/>
                         </Grid>
 
-                        <TextBlock Text="Occupancy &amp; Status" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource NocturnalAccentBrush}" Margin="0,10,0,15"/>
+                        <TextBlock Text="PREFERENCES &amp; STATUS" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,10,0,20" />
 
-                        <Grid Margin="0,0,0,25">
+                        <Grid Margin="0,0,0,20">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="15" />
+                                <ColumnDefinition Width="20" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0" Text="{Binding FormAdultsCount}" materialDesign:HintAssist.Hint="Adults" Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
-                            <ComboBox Grid.Column="2" ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding FormStatus}"
-                                      materialDesign:HintAssist.Hint="Status" Style="{StaticResource MaterialDesignFloatingHintComboBox}"/>
+                            <TextBox Grid.Column="0" Text="{Binding FormAdultsCount}" materialDesign:HintAssist.Hint="Adult Guests" Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" VerticalContentAlignment="Center"/>
+                            <ComboBox Grid.Column="2" ItemsSource="{Binding PaymentStatusOptions}" SelectedItem="{Binding FormPaymentStatus}"
+                                      materialDesign:HintAssist.Hint="Payment Status" Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55"/>
                         </Grid>
 
-                        <TextBox Text="{Binding FormNotes}" materialDesign:HintAssist.Hint="Special Requests / Notes" 
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" TextWrapping="Wrap" AcceptsReturn="True" Height="60" Margin="0,0,0,25"/>
+                        <Grid Margin="0,0,0,30">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" ItemsSource="{Binding RoomStatusOptions}" SelectedItem="{Binding FormRoomStatus}"
+                                      materialDesign:HintAssist.Hint="Room Status" Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55"/>
+                        </Grid>
 
-                        <Border Background="#1A82ABFF" CornerRadius="8" Padding="15" Margin="0,10,0,0">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <TextBlock Text="Total Cost:" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                                <TextBlock Text="{Binding FormTotalPrice, StringFormat=C}" FontSize="24" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding FormNotes}" materialDesign:HintAssist.Hint="Operational Notes / Requests" 
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}" TextWrapping="Wrap" AcceptsReturn="True" Height="100" Margin="0,0,0,30"/>
+
+                        <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="15" Padding="25" Margin="0,10,0,0">
+                            <StackPanel>
+                                <TextBlock Text="ESTIMATED TOTAL" FontSize="11" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" />
+                                <TextBlock Text="{Binding FormTotalPrice, StringFormat=C}" FontSize="32" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,10,0,0"/>
+                                <TextBlock Text="Includes base tax and seasonal adjustments" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" FontWeight="Bold" Margin="0,5,0,0"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
                 </ScrollViewer>
 
                 <!-- Action Footer -->
-                <Border Grid.Row="2" BorderThickness="0,1,0,0" BorderBrush="#252525" Padding="20">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Border Grid.Row="2" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource DividerBrush}" Padding="30">
+                    <Grid>
                         <Button Content="DELETE" Command="{Binding DeleteCommand}" 
-                                Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource DangerRedBrush}" Margin="0,0,40,0"/>
+                                Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource DangerRedBrush}" FontWeight="Black" HorizontalAlignment="Left" Padding="0"/>
 
-                        <Button Content="CANCEL" Command="{Binding CancelEditCommand}" 
-                                Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#353535" Foreground="White" Margin="0,0,10,0"/>
-                                
-                        <Button Content="SAVE BOOKING" Command="{Binding SaveCommand}" 
-                                Style="{StaticResource MaterialDesignRaisedButton}" Background="{DynamicResource NocturnalAccentBrush}" Foreground="#111111" FontWeight="Bold" BorderThickness="0" materialDesign:ButtonAssist.CornerRadius="6" />
-                    </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="CLOSE" Command="{Binding CancelEditCommand}" 
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="{DynamicResource DividerBrush}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,15,0" Height="45" Padding="25,0" materialDesign:ButtonAssist.CornerRadius="12"/>
+                                    
+                            <Button Content="CONFIRM CHANGES" Command="{Binding SaveCommand}" 
+                                    Style="{StaticResource MaterialDesignFlatButton}" Background="{DynamicResource LuminousAccentBrush}" Foreground="White" FontWeight="Black" Height="45" Padding="30,0" materialDesign:ButtonAssist.CornerRadius="12" />
+                        </StackPanel>
+                    </Grid>
                 </Border>
             </Grid>
         </Border>

@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using HRS.API.Data;
 using HRS.API.Models;
+using HRS.API.Helpers;
+using HRS.API.Data.Repositories;
+using HRS.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +15,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Repositories
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+
+// Services
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -19,7 +31,10 @@ if (app.Environment.IsDevelopment())
 {
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseAuthorization();
 app.MapControllers();
 
@@ -29,15 +44,14 @@ using (var scope = app.Services.CreateScope())
     try 
     {
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        db.Database.EnsureDeleted();
         db.Database.EnsureCreated();
         
         // Seed initial admin if not exists
         if (!db.Users.Any())
         {
-            db.Users.Add(new UserModel { Id = Guid.NewGuid().ToString(), Username = "admin", Password = "123", Role = "Admin" });
-            db.Users.Add(new UserModel { Id = Guid.NewGuid().ToString(), Username = "reception", Password = "123", Role = "Receptionist" });
-            db.Users.Add(new UserModel { Id = Guid.NewGuid().ToString(), Username = "finance", Password = "123", Role = "Finance" });
+            db.Users.Add(new UserModel { Id = Guid.NewGuid().ToString(), Username = "admin", Password = SecurityHelper.HashPassword("admin123"), Role = "Admin" });
+            db.Users.Add(new UserModel { Id = Guid.NewGuid().ToString(), Username = "reception", Password = SecurityHelper.HashPassword("reception123"), Role = "Receptionist" });
+            db.Users.Add(new UserModel { Id = Guid.NewGuid().ToString(), Username = "finance", Password = SecurityHelper.HashPassword("finance123"), Role = "Finance" });
             
             // Seed basic room types
             db.RoomTypes.AddRange(new List<RoomTypeModel> {
@@ -51,7 +65,9 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Migration Error: {ex.Message}");
+        Console.WriteLine($"[CRITICAL] Database Initialization Failed: {ex.Message}");
+        if (ex.InnerException != null) Console.WriteLine($"Inner Error: {ex.InnerException.Message}");
+        Console.WriteLine(ex.ToString());
     }
 }
 

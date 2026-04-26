@@ -94,7 +94,8 @@ namespace HRS.Services
         {
             bool hasActive = DataStore.Data.Reservations.Any(r =>
                 r.CustomerId == customerId &&
-                (r.Status == "Pending" || r.Status == "Confirmed" || r.Status == "CheckedIn"));
+                r.RoomStatus != "Cancelled" && 
+                r.RoomStatus != "CheckedOut");
 
             return hasActive
                 ? (false, "Cannot delete: this customer has active reservations.")
@@ -109,7 +110,7 @@ namespace HRS.Services
                 .Where(r => r.CustomerId == customerId).ToList();
 
             var completed = allReservations
-                .Where(r => r.Status == "CheckedOut").ToList();
+                .Where(r => r.RoomStatus == "CheckedOut").ToList();
 
             int totalNights = completed.Sum(r =>
                 Math.Max(1, (int)(r.CheckOut.Date - r.CheckIn.Date).TotalDays));

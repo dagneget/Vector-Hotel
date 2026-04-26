@@ -11,19 +11,12 @@ namespace HRS.Services
 
         public static async Task<bool> LoginAsync(string username, string password)
         {
-            try 
+            var response = await ApiService.PostAsync<UserModel>("users/login", new { Username = username, Password = password });
+            if (response != null)
             {
-                var response = await ApiService.PostAsync<UserModel>("users/login", new { Username = username, Password = password });
-                if (response != null)
-                {
-                    CurrentUser = response;
-                    await DataStore.LoadAsync(); // Load all data once logged in
-                    return true;
-                }
-            }
-            catch (Exception)
-            {
-                // Login failed or API unreachable
+                CurrentUser = response;
+                await DataStore.LoadAsync(); // Load all data once logged in
+                return true;
             }
             return false;
         }

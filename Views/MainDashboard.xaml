@@ -4,7 +4,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:viewmodels="clr-namespace:HRS.ViewModels"
         xmlns:local="clr-namespace:HRS.Views"
-        Title="NOCTURNAL - Grand Hotel" Height="850" Width="1350"
+        Title="VECTOR HOTEL - Premium Property Management" Height="850" Width="1350"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource AppBackgroundBrush}"
         Foreground="{DynamicResource TextPrimaryBrush}"
@@ -46,71 +46,164 @@
         </Grid.ColumnDefinitions>
 
         <!-- Sidebar -->
-        <Border Grid.Column="0" Background="{DynamicResource SidebarBackgroundBrush}" BorderThickness="0,0,1,0" BorderBrush="#1C1C1C">
+        <Border Grid.Column="0" Background="#0F172A" BorderThickness="0,0,1,0" BorderBrush="#1E293B">
             <Grid>
                 <!-- Top Brand -->
-                <StackPanel VerticalAlignment="Top" Margin="25,30,0,0">
-                    <TextBlock Text="NOCTURNAL" FontSize="26" FontWeight="Heavy" FontStyle="Italic" Foreground="{DynamicResource NocturnalAccentBrush}" Margin="0,0,0,5"/>
-                    <TextBlock Text="GRAND HOTEL" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,40"/>
+                <StackPanel VerticalAlignment="Top" Margin="25,40,0,0">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <Border Width="36" Height="36" Background="#3B82F6" CornerRadius="10">
+                            <materialDesign:PackIcon Kind="Star" Foreground="White" Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="VECTOR HOTEL" FontSize="18" FontWeight="Black" Foreground="White" VerticalAlignment="Center" Margin="12,0,0,0" />
+                    </StackPanel>
+                    <TextBlock Text="PREMIUM HOTEL SYSTEM" FontSize="10" FontWeight="Bold" Foreground="#9CA3AF" Margin="48,0,0,40"/>
                     
-                    <Button Command="{Binding NavigateDashboardCommand}" Height="45" Background="Transparent" BorderThickness="0" Margin="0,5,20,5" Padding="15,0">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="200">
-                            <materialDesign:PackIcon Kind="ViewDashboardOutline" Width="20" Height="20" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                            <TextBlock Text="DASHBOARD" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                    <Button Command="{Binding NavigateDashboardCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource LuminousSidebarButtonStyle}">
+                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsDashboardActive}" Value="True">
+                                        <Setter Property="Background" Value="#2610B981"/>
+                                        <Setter Property="Foreground" Value="#10B981"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="ViewDashboard" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="Dashboard" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                     
-                    <Button Command="{Binding NavigateReservationsCommand}" Visibility="{Binding CanViewReservations, Converter={StaticResource BooleanToVisibilityConverter}}" Height="45" Background="Transparent" BorderThickness="0" Margin="0,5,20,5" Padding="15,0">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="200">
-                            <materialDesign:PackIcon Kind="CalendarCheckOutline" Width="20" Height="20" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                            <TextBlock Text="RESERVATIONS" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                    <Button Command="{Binding NavigateReservationsCommand}" Visibility="{Binding CanViewReservations, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource LuminousSidebarButtonStyle}">
+                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsReservationsActive}" Value="True">
+                                        <Setter Property="Background" Value="#2610B981"/>
+                                        <Setter Property="Foreground" Value="#10B981"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="CalendarCheck" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="Reservations" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Command="{Binding NavigateRoomsCommand}" Visibility="{Binding CanViewRooms, Converter={StaticResource BooleanToVisibilityConverter}}" Height="45" Background="Transparent" BorderThickness="0" Margin="0,5,20,5" Padding="15,0">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="200">
-                            <materialDesign:PackIcon Kind="BedSingleOutline" Width="22" Height="22" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                            <TextBlock Text="ROOMS" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                    <Button Command="{Binding NavigateRoomsCommand}" Visibility="{Binding CanViewRooms, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource LuminousSidebarButtonStyle}">
+                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsRoomsActive}" Value="True">
+                                        <Setter Property="Background" Value="#2610B981"/>
+                                        <Setter Property="Foreground" Value="#10B981"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="DoorOpen" Width="22" Height="22" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="Rooms" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Command="{Binding NavigateCustomersCommand}" Visibility="{Binding CanViewCustomers, Converter={StaticResource BooleanToVisibilityConverter}}" Height="45" Background="Transparent" BorderThickness="0" Margin="0,5,20,5" Padding="15,0">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="200">
-                            <materialDesign:PackIcon Kind="AccountMultipleOutline" Width="22" Height="22" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                            <TextBlock Text="CUSTOMERS" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                    <Button Command="{Binding NavigateCustomersCommand}" Visibility="{Binding CanViewCustomers, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource LuminousSidebarButtonStyle}">
+                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsCustomersActive}" Value="True">
+                                        <Setter Property="Background" Value="#2610B981"/>
+                                        <Setter Property="Foreground" Value="#10B981"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="AccountGroup" Width="22" Height="22" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="Guests" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Command="{Binding NavigatePaymentsCommand}" Visibility="{Binding CanViewPayments, Converter={StaticResource BooleanToVisibilityConverter}}" Height="45" Background="Transparent" BorderThickness="0" Margin="0,5,20,5" Padding="15,0">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="200">
-                            <materialDesign:PackIcon Kind="CreditCardOutline" Width="20" Height="20" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                            <TextBlock Text="PAYMENTS" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                    <Button Command="{Binding NavigatePaymentsCommand}" Visibility="{Binding CanViewPayments, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource LuminousSidebarButtonStyle}">
+                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPaymentsActive}" Value="True">
+                                        <Setter Property="Background" Value="#2610B981"/>
+                                        <Setter Property="Foreground" Value="#10B981"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="CreditCardCheck" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="Payments" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Command="{Binding NavigateReportsCommand}" Visibility="{Binding CanViewReports, Converter={StaticResource BooleanToVisibilityConverter}}" Height="45" Background="Transparent" BorderThickness="0" Margin="0,5,20,5" Padding="15,0">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="200">
-                            <materialDesign:PackIcon Kind="ChartBar" Width="20" Height="20" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                            <TextBlock Text="REPORTS" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                    <Button Command="{Binding NavigateReportsCommand}" Visibility="{Binding CanViewReports, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource LuminousSidebarButtonStyle}">
+                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsReportsActive}" Value="True">
+                                        <Setter Property="Background" Value="#2610B981"/>
+                                        <Setter Property="Foreground" Value="#10B981"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="ChartPie" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="Reports" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
 
-                <!-- Bottom Button -->
-                <StackPanel VerticalAlignment="Bottom" Margin="25,0,25,30">
-                    <Button Content="QUICK CHECK-IN" Visibility="{Binding CanViewReservations, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{DynamicResource NocturnalAccentBrush}" Foreground="#111111" FontWeight="Bold" Height="45" BorderThickness="0" materialDesign:ButtonAssist.CornerRadius="6" Margin="0,0,0,30" />
+                <!-- Bottom Sections -->
+                <StackPanel VerticalAlignment="Bottom" Margin="10,0,10,30">
+                    <Border Background="#1E293B" CornerRadius="12" Padding="15" Margin="0,0,0,20">
+                        <StackPanel>
+                            <TextBlock Text="Need Help?" FontWeight="Bold" FontSize="13" Foreground="#3B82F6"/>
+                            <TextBlock Text="24/7 Support available" FontSize="11" Foreground="#9CA3AF" Margin="0,4,0,10"/>
+                            <Button Content="Contact Support" Style="{StaticResource MaterialDesignFlatButton}" Foreground="#3B82F6" FontSize="11" Height="30" Padding="0"/>
+                        </StackPanel>
+                    </Border>
                     
-                    <Button Command="{Binding NavigateSettingsCommand}" Visibility="{Binding CanViewSettings, Converter={StaticResource BooleanToVisibilityConverter}}" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" Padding="0" Margin="0,0,0,15">
+                    <Button Command="{Binding NavigateSettingsCommand}" Visibility="{Binding CanViewSettings, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource LuminousSidebarButtonStyle}">
+                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSettingsActive}" Value="True">
+                                        <Setter Property="Background" Value="#2610B981"/>
+                                        <Setter Property="Foreground" Value="#10B981"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="ShieldAccount" Width="18" Height="18" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                            <TextBlock Text="USERS &amp; AUDIT LOGS" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                            <materialDesign:PackIcon Kind="ShieldLock" Width="18" Height="18" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="Security &amp; Logs" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Command="{Binding LogoutCommand}" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" Height="40" HorizontalContentAlignment="Left" HorizontalAlignment="Left" Width="100">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                            <materialDesign:PackIcon Kind="LogoutVariant" Width="18" Height="18" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                            <TextBlock Text="LOG OUT" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                    <Button Command="{Binding LogoutCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource LuminousSidebarButtonStyle}">
+                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Logout" Width="18" Height="18" Foreground="#EF4444" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="Logout" FontSize="13" FontWeight="SemiBold" Foreground="#EF4444" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -118,41 +211,106 @@
         </Border>
 
         <!-- Main Workspace -->
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="1" Background="{DynamicResource AppBackgroundBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="80" /> <!-- Top Header Bar -->
                 <RowDefinition Height="*" />  <!-- Inner Content -->
             </Grid.RowDefinitions>
 
             <!-- Header -->
-            <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="#1C1C1C" Background="{DynamicResource AppBackgroundBrush}">
+            <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource DividerBrush}" Background="{DynamicResource SidebarBackgroundBrush}">
                 <Grid Margin="30,0">
-                    <!-- Search Bar -->
-                    <Border HorizontalAlignment="Left" VerticalAlignment="Center" Width="400" Height="40" Background="#181818" CornerRadius="8">
+                    <!-- Search Bar (Left) -->
+                    <Border HorizontalAlignment="Left" VerticalAlignment="Center" Width="350" Height="40" Background="{DynamicResource AppBackgroundBrush}" CornerRadius="20" BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}">
                         <StackPanel Orientation="Horizontal" Margin="15,0">
-                            <materialDesign:PackIcon Kind="Magnify" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Width="18" Height="18" Margin="0,0,10,0"/>
-                            <TextBox BorderThickness="0" Background="Transparent" Foreground="White" Width="340" VerticalAlignment="Center" FontSize="14" materialDesign:HintAssist.Hint="Search guests, rooms, bookings..."/>
+                            <materialDesign:PackIcon Kind="Magnify" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Width="20" Height="20" Margin="0,0,10,0"/>
+                            <TextBox BorderThickness="0" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" Width="290" VerticalAlignment="Center" FontSize="14" materialDesign:HintAssist.Hint="Search anything..."/>
+                            <Border Width="24" Height="24" Background="{DynamicResource SuccessGreenBrush}" CornerRadius="12" VerticalAlignment="Center" Margin="5,0,0,0">
+                                <materialDesign:PackIcon Kind="Close" Foreground="White" Width="14" Height="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </Border>
                         </StackPanel>
                     </Border>
 
+                    <!-- Center Branding -->
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+                        <Border Width="32" Height="32" Background="{DynamicResource LuminousAccentBrush}" CornerRadius="8" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="Star" Foreground="White" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="VECTOR HOTEL" FontSize="24" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" Margin="12,0,0,0" FontFamily="Segoe UI"/>
+                    </StackPanel>
+
                     <!-- Right Profile Actions -->
                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,10,0">
-                            <materialDesign:PackIcon Kind="Bell" />
+                        
+                        <!-- Notifications -->
+                        <Grid>
+                            <Button x:Name="BellButton" Command="{Binding ToggleNotificationsCommand}" Style="{DynamicResource MaterialDesignIconButton}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="10,0">
+                                <materialDesign:PackIcon Kind="BellBadge" Width="24" Height="24"/>
+                            </Button>
+                            
+                            <Popup IsOpen="{Binding IsNotificationsOpen, Mode=TwoWay}" PlacementTarget="{Binding ElementName=BellButton}" Placement="Bottom" StaysOpen="False" AllowsTransparency="True">
+                                <Border Background="{DynamicResource SidebarBackgroundBrush}" CornerRadius="12" BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}" Width="300" MaxHeight="400" Padding="15">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        
+                                        <TextBlock Grid.Row="0" Text="RECENT NOTIFICATIONS" FontSize="11" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,10" />
+                                        
+                                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                            <ItemsControl ItemsSource="{Binding RecentNotifications}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1" Padding="0,8">
+                                                            <StackPanel>
+                                                                <TextBlock Text="{Binding Action}" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                                <TextBlock Text="{Binding Details}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Margin="0,2,0,0" />
+                                                                <TextBlock Text="{Binding Timestamp, StringFormat='{}{0:HH:mm}'}" FontSize="9" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.6" Margin="0,4,0,0" HorizontalAlignment="Right" />
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </ScrollViewer>
+                                    </Grid>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        
+                        <!-- Theme Toggle Button -->
+                        <Button Command="{Binding ToggleThemeCommand}" 
+                                Style="{DynamicResource MaterialDesignIconButton}" 
+                                Foreground="{DynamicResource TextSecondaryBrush}" 
+                                Margin="0,0,10,0"
+                                ToolTip="{Binding ThemeTooltip}">
+                            <materialDesign:PackIcon Kind="{Binding ThemeIcon}" Width="24" Height="24"/>
                         </Button>
-                        <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,10,0">
-                            <materialDesign:PackIcon Kind="Cog" />
-                        </Button>
-                        <Button Style="{StaticResource MaterialDesignIconButton}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,20,0">
-                            <materialDesign:PackIcon Kind="HelpCircleOutline" />
+                        
+                        <!-- Settings Cog -->
+                        <Button Command="{Binding NavigateSettingsCommand}" Style="{DynamicResource MaterialDesignIconButton}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="15,0">
+                            <materialDesign:PackIcon Kind="Cog" Width="24" Height="24"/>
                         </Button>
 
-                        <StackPanel Margin="0,0,15,0" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding CurrentUserName}" FontWeight="Bold" FontSize="14" Foreground="White" TextAlignment="Right"/>
-                            <TextBlock Text="{Binding CurrentUserRole}" FontWeight="SemiBold" FontSize="10" Foreground="{DynamicResource NocturnalAccentBrush}" TextAlignment="Right"/>
-                        </StackPanel>
+                        <!-- Profile Manager Button -->
+                        <Button Command="{Binding OpenProfileCommand}" Background="Transparent" BorderThickness="0" Padding="0" Margin="0" Cursor="Hand" ToolTip="Manage Profile">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <StackPanel Orientation="Horizontal">
+                                        <StackPanel Margin="0,0,10,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding CurrentUserName}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" TextAlignment="Right"/>
+                                            <TextBlock Text="{Binding CurrentUserRole}" FontWeight="SemiBold" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" TextAlignment="Right" Opacity="0.8"/>
+                                        </StackPanel>
 
-                        <Ellipse Width="40" Height="40" Fill="#282828" Stroke="{DynamicResource NocturnalAccentBrush}" StrokeThickness="2" />
+                                        <Border Width="38" Height="38" CornerRadius="10" BorderThickness="2" BorderBrush="{DynamicResource LuminousAccentBrush}" Padding="2">
+                                            <Border CornerRadius="8" Background="{DynamicResource LuminousAccentBrush}">
+                                                <TextBlock Text="{Binding CurrentUserName[0]}" Foreground="White" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </Border>
+                                    </StackPanel>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </Border>

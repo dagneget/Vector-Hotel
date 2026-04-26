@@ -11,7 +11,7 @@
         <viewmodels:DashboardViewModel />
     </UserControl.DataContext>
 
-    <Grid Margin="30,20,30,20">
+    <Grid Margin="30,25">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- Top Metrics -->
             <RowDefinition Height="*" />    <!-- Main Dashboard Body -->
@@ -30,68 +30,79 @@
             </Grid.ColumnDefinitions>
 
             <!-- Occupancy Card -->
-            <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#252525">
+            <Border Grid.Column="0" Style="{StaticResource LuminousCardStyle}">
                 <Grid>
                     <StackPanel>
-                        <TextBlock Text="OCCUPANCY RATE" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                        <TextBlock Text="{Binding OccupancyText}" FontSize="36" FontWeight="Bold" Foreground="White" Margin="0,15,0,0"/>
-                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                            <materialDesign:PackIcon Kind="TrendingUp" Foreground="{DynamicResource SuccessGreenBrush}" Width="16" Height="16" VerticalAlignment="Center"/>
-                            <TextBlock Text="+3.1% from last week" FontSize="11" Foreground="{DynamicResource SuccessGreenBrush}" Margin="5,0,0,0"/>
+                        <TextBlock Text="OCCUPANCY RATE" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                        <TextBlock Text="{Binding OccupancyText}" FontSize="38" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,15,0,0"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0" Cursor="Hand" 
+                                    MouseLeftButtonDown="OnOccupancyClick">
+                            <materialDesign:PackIcon Kind="TrendingUp" Foreground="{Binding OccupancyTrendBrush}" Width="16" Height="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding OccupancyTrendText}" FontSize="12" Foreground="{Binding OccupancyTrendBrush}" Margin="5,0,0,0" FontWeight="SemiBold"/>
+                            <TextBlock Text=" (Click for details)" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" 
+                                       Margin="8,0,0,0" Opacity="0.6" FontStyle="Italic"/>
                         </StackPanel>
                     </StackPanel>
-                    <materialDesign:PackIcon Kind="BedOutline" HorizontalAlignment="Right" Opacity="0.1" Width="60" Height="60" VerticalAlignment="Center" Foreground="White" />
+                    <materialDesign:PackIcon Kind="Bed" HorizontalAlignment="Right" Opacity="0.05" Width="55" Height="55" VerticalAlignment="Top" Foreground="{DynamicResource LuminousAccentBrush}" />
                 </Grid>
             </Border>
 
             <!-- ADR Card -->
-            <Border Grid.Column="2" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#252525">
+            <Border Grid.Column="2" Style="{StaticResource LuminousCardStyle}">
                 <Grid>
                     <StackPanel>
-                        <TextBlock Text="AVERAGE DAILY RATE" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                        <TextBlock Text="{Binding AdrText}" FontSize="36" FontWeight="Bold" Foreground="White" Margin="0,15,0,0"/>
-                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                            <materialDesign:PackIcon Kind="TrendingUp" Foreground="{DynamicResource SuccessGreenBrush}" Width="16" Height="16" VerticalAlignment="Center"/>
-                            <TextBlock Text="+12% seasonal peak" FontSize="11" Foreground="{DynamicResource SuccessGreenBrush}" Margin="5,0,0,0"/>
+                        <TextBlock Text="AVERAGE DAILY RATE" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                        <TextBlock Text="{Binding AdrText}" FontSize="38" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,15,0,0"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0" Cursor="Hand" 
+                                    MouseLeftButtonDown="OnAdrClick">
+                            <materialDesign:PackIcon Kind="ChartLine" Foreground="{Binding AdrTrendBrush}" Width="16" Height="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding AdrTrendText}" FontSize="12" Foreground="{Binding AdrTrendBrush}" Margin="5,0,0,0" FontWeight="SemiBold"/>
+                            <TextBlock Text=" (Click for details)" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" 
+                                       Margin="8,0,0,0" Opacity="0.6" FontStyle="Italic"/>
                         </StackPanel>
                     </StackPanel>
-                    <materialDesign:PackIcon Kind="CurrencyUsd" HorizontalAlignment="Right" Opacity="0.1" Width="60" Height="60" VerticalAlignment="Center" Foreground="White" />
+                    <materialDesign:PackIcon Kind="CurrencyUsd" HorizontalAlignment="Right" Opacity="0.05" Width="55" Height="55" VerticalAlignment="Top" Foreground="{DynamicResource LuminousAccentBrush}" />
                 </Grid>
             </Border>
 
             <!-- RevPAR Card -->
-            <Border Grid.Column="4" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#252525">
+            <Border Grid.Column="4" Style="{StaticResource LuminousCardStyle}">
                 <Grid>
                     <StackPanel>
-                        <TextBlock Text="REVPAR" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                        <TextBlock Text="{Binding RevparText}" FontSize="36" FontWeight="Bold" Foreground="White" Margin="0,15,0,0"/>
-                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                            <materialDesign:PackIcon Kind="TrendingDown" Foreground="{DynamicResource DangerRedBrush}" Width="16" Height="16" VerticalAlignment="Center"/>
-                            <TextBlock Text="-0.8% target variance" FontSize="11" Foreground="{DynamicResource DangerRedBrush}" Margin="5,0,0,0"/>
+                        <TextBlock Text="REVPAR" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                        <TextBlock Text="{Binding RevparText}" FontSize="38" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,15,0,0"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0" Cursor="Hand" 
+                                    MouseLeftButtonDown="OnRevparClick">
+                            <materialDesign:PackIcon Kind="ArrowDownCircle" Foreground="{Binding RevparTrendBrush}" Width="16" Height="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding RevparTrendText}" FontSize="12" Foreground="{Binding RevparTrendBrush}" Margin="5,0,0,0" FontWeight="SemiBold"/>
+                            <TextBlock Text=" (Click for details)" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" 
+                                       Margin="8,0,0,0" Opacity="0.6" FontStyle="Italic"/>
                         </StackPanel>
                     </StackPanel>
-                    <materialDesign:PackIcon Kind="ChartLine" HorizontalAlignment="Right" Opacity="0.1" Width="60" Height="60" VerticalAlignment="Center" Foreground="White" />
+                    <materialDesign:PackIcon Kind="Finance" HorizontalAlignment="Right" Opacity="0.05" Width="55" Height="55" VerticalAlignment="Top" Foreground="{DynamicResource LuminousAccentBrush}" />
                 </Grid>
             </Border>
 
             <!-- Arrivals Card -->
-            <Border Grid.Column="6" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="20" BorderThickness="1" BorderBrush="#252525">
+            <Border Grid.Column="6" Style="{StaticResource LuminousCardStyle}">
                 <Grid>
                     <StackPanel>
-                        <TextBlock Text="ARRIVALS TODAY" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                        <TextBlock Text="{Binding ArrivalsText}" FontSize="36" FontWeight="Bold" Foreground="White" Margin="0,15,0,0"/>
-                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                            <Ellipse Width="24" Height="24" Fill="#3382ABFF" />
-                            <Ellipse Width="24" Height="24" Fill="#332DCC70" Margin="-8,0,0,0" />
-                            <TextBlock Text="+39" FontSize="11" Foreground="White" FontWeight="Bold" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="ARRIVALS TODAY" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" />
+                        <TextBlock Text="{Binding ArrivalsText}" FontSize="38" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,15,0,0"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0" Cursor="Hand" 
+                                    MouseLeftButtonDown="OnArrivalsClick">
+                            <materialDesign:PackIcon Kind="AccountCheck" Foreground="{DynamicResource LuminousAccentBrush}" Width="18" Height="18" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding ActiveCheckinsText}" FontSize="12" Foreground="{DynamicResource LuminousAccentBrush}" Margin="5,0,0,0" FontWeight="SemiBold"/>
+                            <TextBlock Text=" (Click for details)" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" 
+                                       Margin="8,0,0,0" Opacity="0.6" FontStyle="Italic"/>
                         </StackPanel>
                     </StackPanel>
-                    <materialDesign:PackIcon Kind="BagChecked" HorizontalAlignment="Right" Opacity="0.1" Width="60" Height="60" VerticalAlignment="Center" Foreground="White" />
+                    <materialDesign:PackIcon Kind="Luggage" HorizontalAlignment="Right" Opacity="0.05" Width="55" Height="55" VerticalAlignment="Top" Foreground="{DynamicResource LuminousAccentBrush}" />
                 </Grid>
             </Border>
         </Grid>
 
-        <!-- Main Dashboard Body (Splits into Recent Reservations and Room Status) -->
+        <!-- Main Dashboard Body -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -100,88 +111,180 @@
             </Grid.ColumnDefinitions>
 
             <!-- Left: Recent Reservations -->
-            <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" BorderThickness="1" BorderBrush="#252525" Padding="25">
+            <Border Grid.Column="0" Style="{StaticResource LuminousCardStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" Margin="0,0,0,20">
+                    <Grid Grid.Row="0" Margin="0,0,0,25">
                         <StackPanel>
-                            <TextBlock Text="Recent Reservations" FontSize="22" FontWeight="Bold" Foreground="White" />
-                            <TextBlock Text="ACTIVE QUEUE FOR NEXT 24 HOURS" FontSize="10" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,0"/>
+                            <TextBlock Text="Recent Reservations" FontSize="24" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" />
+                            <TextBlock Text="LIVE TRAFFIC FOR NEXT 24 HOURS" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,0" Opacity="0.8"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Content="FILTER" Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#353535" Foreground="White" Height="32" Padding="15,0" Margin="0,0,10,0"/>
-                            <Button Content="VIEW ALL" Style="{StaticResource MaterialDesignRaisedButton}" Background="#353535" BorderThickness="0" Foreground="White" Height="32" Padding="15,0"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <!-- Filter Button with dropdown popup -->
+                            <Grid>
+                                <Button Command="{Binding ToggleFilterCommand}"
+                                        Height="38" Padding="15,0" Margin="0,0,10,0"
+                                        BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}"
+                                        Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}"
+                                        Cursor="Hand" materialDesign:ButtonAssist.CornerRadius="10">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+                                            <Setter Property="BorderBrush" Value="{DynamicResource DividerBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource LuminousAccentBrush}"/>
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource LuminousAccentBrush}"/>
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                </Trigger>
+                                                <DataTrigger Binding="{Binding IsFilterOpen}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource LuminousAccentBrush}"/>
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource LuminousAccentBrush}"/>
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="FilterVariant" Width="18" Height="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Filter" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Filter Dropdown Popup -->
+                                <Popup IsOpen="{Binding IsFilterOpen, Mode=TwoWay}"
+                                       Placement="Bottom" StaysOpen="False"
+                                       AllowsTransparency="True">
+                                    <Border Background="{DynamicResource SidebarBackgroundBrush}"
+                                            BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1"
+                                            CornerRadius="12" Padding="20" MinWidth="220">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="20" ShadowDepth="0" Color="Black" Opacity="0.15"/>
+                                        </Border.Effect>
+                                        <StackPanel>
+                                            <TextBlock Text="FILTER BY STATUS" FontSize="10" FontWeight="Black"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12"/>
+                                            <ComboBox ItemsSource="{Binding FilterStatusOptions}"
+                                                      SelectedItem="{Binding FilterStatus}"
+                                                      Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                                      Height="45"
+                                                      SelectionChanged="OnFilterSelectionChanged"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+
+                            <!-- VIEW ALL Button -->
+                            <Button Command="{Binding ViewAllCommand}" Height="38" Padding="20,0" Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="bd" Background="{DynamicResource LuminousAccentBrush}" CornerRadius="10">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#1A56DB"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="bd" Property="Background" Value="#1347CC"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <StackPanel Orientation="Horizontal" Margin="20,0">
+                                    <TextBlock Text="VIEW ALL" FontWeight="Black" FontSize="13" Foreground="White" VerticalAlignment="Center"/>
+                                    <materialDesign:PackIcon Kind="ArrowRight" Width="18" Height="18" Margin="8,0,0,0" Foreground="White" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
                     </Grid>
 
                     <DataGrid Grid.Row="1" ItemsSource="{Binding RecentReservations}" AutoGenerateColumns="False" IsReadOnly="True" 
-                              HeadersVisibility="Column" SelectionMode="Single" BorderThickness="0" Background="Transparent" RowHeight="70">
+                               HeadersVisibility="Column" SelectionMode="Single" BorderThickness="0" Background="Transparent" RowHeight="75">
                         <DataGrid.ColumnHeaderStyle>
                             <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
                                 <Setter Property="Background" Value="Transparent"/>
                                 <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                                 <Setter Property="FontSize" Value="11"/>
-                                <Setter Property="Padding" Value="0,0,0,10"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Padding" Value="0,0,0,15"/>
                             </Style>
                         </DataGrid.ColumnHeaderStyle>
                         
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="GUEST" Width="*">
+                            <DataGridTemplateColumn Header="GUEST NAME" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Ellipse Width="40" Height="40" Fill="#282828" Stroke="#3382ABFF" Margin="0,0,15,0"/>
+                                            <Border Width="42" Height="42" CornerRadius="12" Background="{DynamicResource AppBackgroundBrush}" Padding="2" Margin="0,0,15,0">
+                                                <Grid>
+                                                    <Border CornerRadius="10" Background="{DynamicResource SuccessGreenBrush}" Opacity="0.1" />
+                                                    <materialDesign:PackIcon Kind="Account" Foreground="{DynamicResource SuccessGreenBrush}" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
                                             <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding CustomerName}" FontWeight="Bold" Foreground="White" FontSize="14"/>
-                                                <TextBlock Text="Gold Member • 3 nights" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3,0,0"/>
+                                                <TextBlock Text="{Binding CustomerName}" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15"/>
+                                                <TextBlock Text="PREMIUM GUEST • Verified" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3,0,0"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Header="ROOM" Width="120">
+                            <DataGridTemplateColumn Header="ROOM" Width="130">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding RoomNumber}" FontWeight="SemiBold" Foreground="White" FontSize="13"/>
-                                            <TextBlock Text="KING OCEAN VIEW" FontSize="9" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{Binding RoomNumber}" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>
+                                            <TextBlock Text="Executive Suite" FontSize="10" Foreground="{DynamicResource LuminousAccentBrush}" FontWeight="SemiBold" Margin="0,2,0,0"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Header="DATE" Width="100">
+                            <DataGridTemplateColumn Header="DATE" Width="110">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding CheckInDate, StringFormat=MMM dd}" FontWeight="SemiBold" Foreground="White" FontSize="13"/>
-                                            <TextBlock Text="– 27" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                            <TextBlock Text="{Binding CheckInDate, StringFormat=MMM dd}" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>
+                                            <TextBlock Text="Stay Duration" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Header="STATUS" Width="120">
+                            <DataGridTemplateColumn Header="PAYMENT" Width="130">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Border Background="#1A2DCC70" CornerRadius="4" Padding="8,4" HorizontalAlignment="Left">
-                                            <TextBlock Text="{Binding ReservationStatus}" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource SuccessGreenBrush}"/>
-                                        </Border>
+                                        <Grid HorizontalAlignment="Left">
+                                            <Border Background="{Binding PaymentStatus, Converter={StaticResource StatusToColorBrushConverter}}" Opacity="0.15" CornerRadius="8" />
+                                            <TextBlock Text="{Binding PaymentStatus}" FontSize="11" FontWeight="Black" Foreground="{Binding PaymentStatus, Converter={StaticResource StatusToColorBrushConverter}}" Padding="12,6" />
+                                        </Grid>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Header="AMOUNT" Width="100">
+                            <DataGridTemplateColumn Header="ROOM STATUS" Width="130">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right">
-                                            <TextBlock Text="{Binding TotalPrice, StringFormat=${0:N2}}" FontWeight="Bold" Foreground="White" FontSize="14"/>
-                                            <TextBlock Text="Paid" FontSize="9" Foreground="{DynamicResource SuccessGreenBrush}" HorizontalAlignment="Right" Margin="0,2,0,0"/>
+                                        <Grid HorizontalAlignment="Left">
+                                            <Border Background="{Binding ReservationStatus, Converter={StaticResource StatusToColorBrushConverter}}" Opacity="0.15" CornerRadius="8" />
+                                            <TextBlock Text="{Binding ReservationStatus}" FontSize="11" FontWeight="Black" Foreground="{Binding ReservationStatus, Converter={StaticResource StatusToColorBrushConverter}}" Padding="12,6" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="TOTAL" Width="110">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,15,0">
+                                            <TextBlock Text="{Binding TotalPrice, StringFormat=${0:N2}}" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="15"/>
+                                            <TextBlock Text="Confirmed" FontSize="10" Foreground="{DynamicResource SuccessGreenBrush}" HorizontalAlignment="Right" FontWeight="SemiBold" Margin="0,2,0,0"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -193,60 +296,90 @@
 
             <!-- Right: Status and Feed -->
             <StackPanel Grid.Column="2">
-                <!-- Room Status Chart (Simplified representation) -->
-                <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="25" BorderThickness="1" BorderBrush="#252525" Margin="0,0,0,25">
+                <!-- Room Inventory -->
+                <Border Style="{StaticResource LuminousCardStyle}" Margin="0,0,0,25">
                     <StackPanel>
-                        <TextBlock Text="ROOM STATUS" FontSize="12" FontWeight="Bold" Foreground="White" Margin="0,0,0,25"/>
-                        <Grid Height="200" Width="200" HorizontalAlignment="Center">
+                        <TextBlock Text="ROOM INVENTORY" FontSize="14" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,25"/>
+                        <Grid Height="180" Width="180" HorizontalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                            <Grid.RenderTransform>
+                                <RotateTransform Angle="-90" />
+                            </Grid.RenderTransform>
                             <!-- Circular status ring background -->
-                            <Ellipse Stroke="#282828" StrokeThickness="15" />
-                            <!-- Occupied arc -->
-                            <Ellipse Stroke="{DynamicResource NocturnalAccentBrush}" StrokeThickness="15" StrokeDashArray="7,3" />
-                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding TotalRooms}" FontSize="36" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                                <TextBlock Text="TOTAL ROOMS" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            <Ellipse Stroke="{DynamicResource AppBackgroundBrush}" StrokeThickness="18" />
+                            
+                            <!-- Maintenance (Red) -->
+                            <Ellipse Stroke="{DynamicResource DangerRedBrush}" StrokeThickness="18" 
+                                     StrokeDashArray="{Binding MaintenanceDashArray}" StrokeDashOffset="{Binding MaintenanceDashOffset}" />
+                            
+                            <!-- Available (Green) -->
+                            <Ellipse Stroke="{DynamicResource SuccessGreenBrush}" StrokeThickness="18" 
+                                     StrokeDashArray="{Binding AvailableDashArray}" StrokeDashOffset="{Binding AvailableDashOffset}" />
+                            
+                            <!-- Occupied (Blue) -->
+                            <Ellipse Stroke="{DynamicResource LuminousAccentBrush}" StrokeThickness="18" 
+                                     StrokeDashArray="{Binding OccupiedDashArray}" StrokeDashOffset="{Binding OccupiedDashOffset}" />
+
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                                <StackPanel.RenderTransform>
+                                    <RotateTransform Angle="90" />
+                                </StackPanel.RenderTransform>
+                                <TextBlock Text="{Binding TotalRooms}" FontSize="42" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center"/>
+                                <TextBlock Text="UNITS" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" FontWeight="Bold" HorizontalAlignment="Center" />
                             </StackPanel>
                         </Grid>
                         
-                        <StackPanel Margin="0,25,0,0">
-                            <Grid Margin="0,5">
-                                <StackPanel Orientation="Horizontal">
-                                    <Ellipse Width="8" Height="8" Fill="{DynamicResource NocturnalAccentBrush}" Margin="0,0,10,0"/>
-                                    <TextBlock Text="Occupied" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                </StackPanel>
-                                <TextBlock Text="{Binding OccupiedRooms}" HorizontalAlignment="Right" FontWeight="Bold" Foreground="White"/>
-                            </Grid>
-                            <Grid Margin="0,5">
-                                <StackPanel Orientation="Horizontal">
-                                    <Ellipse Width="8" Height="8" Fill="{DynamicResource SuccessGreenBrush}" Margin="0,0,10,0"/>
-                                    <TextBlock Text="Available" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                </StackPanel>
-                                <TextBlock Text="{Binding AvailableRooms}" HorizontalAlignment="Right" FontWeight="Bold" Foreground="White"/>
-                            </Grid>
-                            <Grid Margin="0,5">
-                                <StackPanel Orientation="Horizontal">
-                                    <Ellipse Width="8" Height="8" Fill="{DynamicResource DangerRedBrush}" Margin="0,0,10,0"/>
-                                    <TextBlock Text="Maintenance" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                </StackPanel>
-                                <TextBlock Text="{Binding MaintenanceRooms}" HorizontalAlignment="Right" FontWeight="Bold" Foreground="White"/>
-                            </Grid>
+                        <StackPanel Margin="0,30,0,0">
+                            <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="12" Padding="15" Margin="0,0,0,10" Cursor="Hand"
+                                    MouseLeftButtonDown="OnOccupiedRoomsClick">
+                                <Grid>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Width="12" Height="12" CornerRadius="6" Background="{DynamicResource LuminousAccentBrush}" Margin="0,0,15,0"/>
+                                        <TextBlock Text="Occupied" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold"/>
+                                        <TextBlock Text=" (Click)" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.6" FontStyle="Italic" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding OccupiedRooms}" HorizontalAlignment="Right" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" FontSize="15"/>
+                                </Grid>
+                            </Border>
+                            <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="12" Padding="15" Margin="0,0,0,10" Cursor="Hand"
+                                    MouseLeftButtonDown="OnAvailableRoomsClick">
+                                <Grid>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Width="12" Height="12" CornerRadius="6" Background="{DynamicResource SuccessGreenBrush}" Margin="0,0,15,0"/>
+                                        <TextBlock Text="Available" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold"/>
+                                        <TextBlock Text=" (Click)" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.6" FontStyle="Italic" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding AvailableRooms}" HorizontalAlignment="Right" FontWeight="Black" Foreground="{DynamicResource SuccessGreenBrush}" FontSize="15"/>
+                                </Grid>
+                            </Border>
+                            <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="12" Padding="15" Cursor="Hand"
+                                    MouseLeftButtonDown="OnMaintenanceRoomsClick">
+                                <Grid>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Width="12" Height="12" CornerRadius="6" Background="{DynamicResource DangerRedBrush}" Margin="0,0,15,0"/>
+                                        <TextBlock Text="Maintenance" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" FontWeight="SemiBold"/>
+                                        <TextBlock Text=" (Click)" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.6" FontStyle="Italic" Margin="5,0,0,0"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding MaintenanceRooms}" HorizontalAlignment="Right" FontWeight="Black" Foreground="{DynamicResource DangerRedBrush}" FontSize="15"/>
+                                </Grid>
+                            </Border>
                         </StackPanel>
                     </StackPanel>
                 </Border>
 
-                <!-- Front Desk Feed -->
-                <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Padding="25" BorderThickness="1" BorderBrush="#252525">
+                <!-- Operations Log -->
+                <Border Style="{StaticResource LuminousCardStyle}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <Grid Grid.Row="0" Margin="0,0,0,20">
-                            <TextBlock Text="FRONT DESK FEED" FontSize="12" FontWeight="Bold" Foreground="White" />
-                            <Border Background="#1AFF4B4B" Padding="4,2" CornerRadius="4" HorizontalAlignment="Right">
-                                <TextBlock Text="LIVE" FontSize="9" FontWeight="Bold" Foreground="{DynamicResource DangerRedBrush}"/>
-                            </Border>
+                        <Grid Grid.Row="0" Margin="0,0,0,25">
+                            <TextBlock Text="OPERATIONS LOG" FontSize="14" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" />
+                            <Grid HorizontalAlignment="Right">
+                                <Border Background="{DynamicResource DangerRedBrush}" Opacity="0.1" CornerRadius="6" />
+                                <TextBlock Text="LIVE MONITOR" FontSize="10" FontWeight="Black" Foreground="{DynamicResource DangerRedBrush}" Padding="8,4" />
+                            </Grid>
                         </Grid>
 
                         <ItemsControl Grid.Row="1" ItemsSource="{Binding FrontDeskFeed}">
@@ -254,15 +387,15 @@
                                 <DataTemplate>
                                     <Grid Margin="0,0,0,20">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="40" />
+                                            <ColumnDefinition Width="45" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <Border Grid.Column="0" Background="#282828" Width="36" Height="36" CornerRadius="8" VerticalAlignment="Top">
-                                            <materialDesign:PackIcon Kind="{Binding IconName}" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <Border Grid.Column="0" Background="{DynamicResource AppBackgroundBrush}" Width="40" Height="40" CornerRadius="10" VerticalAlignment="Top">
+                                            <materialDesign:PackIcon Kind="{Binding IconName}" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource LuminousAccentBrush}"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="13" Foreground="White" />
-                                            <TextBlock Text="{Binding SubText}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,3,0,0"/>
+                                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" />
+                                            <TextBlock Text="{Binding SubText}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0"/>
                                         </StackPanel>
                                     </Grid>
                                 </DataTemplate>
@@ -273,10 +406,216 @@
             </StackPanel>
         </Grid>
         
-        <!-- FAB Add Button -->
-        <Button Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="50" Width="50" Margin="0,0,0,0" Padding="0"
-                Style="{StaticResource MaterialDesignFloatingActionAccentButton}" Background="{DynamicResource NocturnalAccentBrush}" BorderThickness="0">
-            <materialDesign:PackIcon Kind="Plus" Width="24" Height="24" Foreground="#111111"/>
+        <!-- Floating Action Button - Quick Add New Reservation -->
+        <Button Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="60" Width="60" Margin="0,0,30,30" Padding="0"
+                Style="{StaticResource MaterialDesignFloatingActionAccentButton}" Background="{DynamicResource LuminousAccentBrush}" BorderThickness="0"
+                Command="{Binding QuickAddCommand}" ToolTip="New Booking">
+            <materialDesign:PackIcon Kind="Plus" Width="28" Height="28" Foreground="White"/>
         </Button>
+
+        <!-- Detail Popup Overlay -->
+        <Border Grid.Row="0" Grid.RowSpan="2" 
+                Background="#80000000"
+                Visibility="{Binding IsDetailsOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Border HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="{DynamicResource CardBackgroundBrush}"
+                    CornerRadius="20" 
+                    Width="900" 
+                    MaxHeight="600"
+                    BorderThickness="1"
+                    BorderBrush="{DynamicResource DividerBrush}">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="40" Color="Black" Opacity="0.3" ShadowDepth="0"/>
+                </Border.Effect>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Header -->
+                    <Border Grid.Row="0" Background="{DynamicResource SidebarBackgroundBrush}" CornerRadius="20,20,0,0" Padding="25,20">
+                        <Grid>
+                            <TextBlock Text="{Binding DetailTitle}" FontSize="20" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                            <Button Command="{Binding CloseDetailsCommand}" 
+                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                    HorizontalAlignment="Right" Padding="0" Width="35" Height="35">
+                                <materialDesign:PackIcon Kind="Close" Width="24" Height="24" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <!-- Filter Bar -->
+                    <Border Grid.Row="1" Background="{DynamicResource AppBackgroundBrush}" Padding="20,15" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource DividerBrush}">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Time Filter:" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <ComboBox ItemsSource="{Binding TimeFilterOptions}" 
+                                          Text="{Binding SelectedTimeFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          Width="160"
+                                          Height="50"
+                                          Padding="10,5"
+                                          Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                          IsEditable="True"
+                                          FontSize="12"/>
+                                
+                                <TextBlock Text="Status:" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="20,0,10,0"/>
+                                <ComboBox ItemsSource="{Binding DetailFilterOptions}" 
+                                          Text="{Binding DetailFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          Width="160"
+                                          Height="50"
+                                          Padding="10,5"
+                                          Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                          IsEditable="True"
+                                          FontSize="12"/>
+                                
+                                <TextBlock Text="From:" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="20,0,5,0"/>
+                                <DatePicker SelectedDate="{Binding FilterStartDate}" Width="130" Height="50" 
+                                            Padding="10,5"
+                                            Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                                            FontSize="12"/>
+                                
+                                <TextBlock Text="To:" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                <DatePicker SelectedDate="{Binding FilterEndDate}" Width="130" Height="50" 
+                                            Padding="10,5"
+                                            Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                                            FontSize="12"/>
+                                
+                                <TextBlock Text="{Binding DetailItems.Count, StringFormat='{}{0} records'}" 
+                                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" 
+                                           VerticalAlignment="Center" Margin="20,0,0,0"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+
+                    <!-- Data List -->
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Margin="20">
+                        <StackPanel>
+                        <ItemsControl ItemsSource="{Binding DetailItems}">
+                            <ItemsControl.Style>
+                                <Style TargetType="ItemsControl">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DetailType}" Value="Rooms">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ItemsControl.Style>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{DynamicResource SidebarBackgroundBrush}"
+                                            CornerRadius="10"
+                                            Padding="15"
+                                            Margin="0,0,0,10"
+                                            BorderThickness="1"
+                                            BorderBrush="{DynamicResource DividerBrush}"
+                                            Cursor="Hand"
+                                            MouseLeftButtonDown="OnDetailItemClick">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="{Binding CustomerName}" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                <TextBlock Text="{Binding RoomNumber, StringFormat='Room {0}'}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0"/>
+                                                <TextBlock Text="{Binding CheckInDate, StringFormat='Check-in: {0:MMM dd, yyyy}'}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.8" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1" 
+                                                       Text="{Binding BaseReservation.TotalPrice, StringFormat='${0:N2}'}" 
+                                                       FontSize="16" FontWeight="Bold" 
+                                                       Foreground="{DynamicResource LuminousAccentBrush}"
+                                                       VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                            <Border Grid.Column="2" 
+                                                    Background="{Binding BaseReservation.Status, Converter={StaticResource StatusToColorBrushConverter}}" 
+                                                    CornerRadius="6" Padding="10,4">
+                                                <TextBlock Text="{Binding BaseReservation.Status}" 
+                                                           FontSize="10" FontWeight="Bold" Foreground="White"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
+                        <!-- Room Details List (shown when DetailType is "Rooms") -->
+                        <ItemsControl ItemsSource="{Binding DetailRooms}">
+                            <ItemsControl.Style>
+                                <Style TargetType="ItemsControl">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DetailType}" Value="Rooms">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ItemsControl.Style>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{DynamicResource SidebarBackgroundBrush}"
+                                            CornerRadius="10"
+                                            Padding="15"
+                                            Margin="0,0,0,10"
+                                            BorderThickness="1"
+                                            BorderBrush="{DynamicResource DividerBrush}"
+                                            Cursor="Hand"
+                                            MouseLeftButtonDown="OnRoomDetailItemClick">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock FontSize="14" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="Room {0} - {1}">
+                                                            <Binding Path="Room.RoomNumber"/>
+                                                            <Binding Path="RoomType"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                                <TextBlock Text="{Binding Room.CleanStatus, StringFormat='Clean Status: {0}'}"
+                                                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0"/>
+                                                <TextBlock Text="{Binding CurrentGuest, StringFormat='Current Guest: {0}'}"
+                                                           FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}"
+                                                           Margin="0,2,0,0" FontStyle="Italic"
+                                                           Visibility="{Binding CurrentGuest, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1" 
+                                                       Text="{Binding BasePrice, StringFormat='${0:N2}/night'}" 
+                                                       FontSize="14" FontWeight="SemiBold" 
+                                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                            <Border Grid.Column="2" 
+                                                    Background="{Binding DisplayStatus, Converter={StaticResource StatusToColorBrushConverter}}" 
+                                                    CornerRadius="6" Padding="10,4">
+                                                <TextBlock Text="{Binding DisplayStatus}" 
+                                                           FontSize="10" FontWeight="Bold" Foreground="White"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Footer -->
+                    <Border Grid.Row="3" Background="{DynamicResource SidebarBackgroundBrush}" CornerRadius="0,0,20,20" Padding="20" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource DividerBrush}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="CLOSE" Command="{Binding CloseDetailsCommand}" 
+                                    Style="{StaticResource MaterialDesignRaisedButton}"
+                                    Background="{DynamicResource LuminousAccentBrush}" Foreground="White"
+                                    Height="40" Padding="25,0" materialDesign:ButtonAssist.CornerRadius="8"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </Border>
     </Grid>
 </UserControl>

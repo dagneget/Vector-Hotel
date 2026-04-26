@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace HRS.Services
     public static class ApiService
     {
         private static readonly HttpClient _client = new HttpClient();
-        private const string BaseUrl = "http://localhost:5262/api/"; 
+        private static readonly string BaseUrl = ConfigurationManager.AppSettings["ApiBaseUrl"] ?? "http://127.0.0.1:5262/api/"; 
 
         public static async Task<T> GetAsync<T>(string endpoint)
         {

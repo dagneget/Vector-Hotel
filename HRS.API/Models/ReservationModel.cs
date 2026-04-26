@@ -13,7 +13,8 @@ namespace HRS.API.Models
         public int ChildrenCount { get; set; }
         public string SpecialRequests { get; set; }
         public decimal TotalPrice { get; set; }
-        public string Status { get; set; } // Pending, Confirmed, CheckedIn, CheckedOut, Cancelled
+        public string PaymentStatus { get; set; } // Pending, Confirmed
+        public string RoomStatus { get; set; } // CheckedIn, CheckedOut, Cancelled
         
         // Advanced Management Fields
         public string Source { get; set; } // Walk-In, Phone, Web

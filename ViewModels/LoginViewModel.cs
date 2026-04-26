@@ -66,8 +66,16 @@ namespace HRS.ViewModels
             }
             catch (Exception ex)
             {
-                ErrorMessage = "Unable to connect to server.";
-                Console.WriteLine(ex.Message);
+                ErrorMessage = $"Server Error: {ex.Message}";
+                if (ex.InnerException != null) ErrorMessage += $" ({ex.InnerException.Message})";
+                
+                try
+                {
+                    System.IO.File.WriteAllText(@"c:\Users\SW\OneDrive\Documents\Hotel-Reservation-System-HRS\error.log", ex.ToString());
+                }
+                catch { }
+                
+                Console.WriteLine(ex.ToString());
             }
         }
     }

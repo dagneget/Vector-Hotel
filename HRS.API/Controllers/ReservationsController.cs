@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HRS.API.Data;
 using HRS.API.Models;
+using HRS.API.Services;
 
 namespace HRS.API.Controllers
 {
@@ -10,10 +11,12 @@ namespace HRS.API.Controllers
     public class ReservationsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IReservationService _reservationService;
 
-        public ReservationsController(AppDbContext context)
+        public ReservationsController(AppDbContext context, IReservationService reservationService)
         {
             _context = context;
+            _reservationService = reservationService;
         }
 
         [HttpGet]
@@ -36,7 +39,11 @@ namespace HRS.API.Controllers
             if (string.IsNullOrEmpty(res.Id)) res.Id = Guid.NewGuid().ToString();
             res.LastModified = DateTime.Now;
             _context.Reservations.Add(res);
+            
             await _context.SaveChangesAsync();
+            await SyncRoomStatusAsync(res);
+            await _context.SaveChangesAsync();
+            
             return CreatedAtAction("GetReservation", new { id = res.Id }, res);
         }
 
@@ -46,7 +53,13 @@ namespace HRS.API.Controllers
             if (id != res.Id) return BadRequest();
             res.LastModified = DateTime.Now;
             _context.Entry(res).State = EntityState.Modified;
-            try { await _context.SaveChangesAsync(); }
+            
+            try 
+            { 
+                await _context.SaveChangesAsync(); 
+                await SyncRoomStatusAsync(res);
+                await _context.SaveChangesAsync();
+            }
             catch (DbUpdateConcurrencyException) { if (!ReservationExists(id)) return NotFound(); else throw; }
             return NoContent();
         }
@@ -57,33 +70,88 @@ namespace HRS.API.Controllers
             var res = await _context.Reservations.FindAsync(id);
             if (res == null) return NotFound();
 
-            var room = await _context.Rooms.FindAsync(res.RoomId);
-            
-            // Basic Status Sync Logic
-            if (newStatus == "CheckedIn")
+            if (newStatus == "Pending" || newStatus == "Confirmed")
             {
-                if (room != null) room.Status = "Occupied";
-                res.CheckInTime = DateTime.Now;
+                res.PaymentStatus = newStatus;
             }
-            else if (newStatus == "CheckedOut")
+            else if (newStatus == "CheckedIn" || newStatus == "CheckedOut" || newStatus == "Cancelled")
             {
-                if (room != null)
+                res.RoomStatus = newStatus;
+                
+                if (newStatus == "CheckedIn")
                 {
-                    room.Status = "Available";
-                    room.CleanStatus = "Dirty";
+                    res.CheckInTime = DateTime.Now;
                 }
-                res.CheckOutTime = DateTime.Now;
+                else if (newStatus == "CheckedOut")
+                {
+                    res.CheckOutTime = DateTime.Now;
+                }
             }
-            else if (newStatus == "Cancelled")
-            {
-                if (room != null && room.Status == "Occupied") room.Status = "Available";
-            }
-
-            res.Status = newStatus;
             res.LastModified = DateTime.Now;
 
             await _context.SaveChangesAsync();
+            await SyncRoomStatusAsync(res);
+            await _context.SaveChangesAsync();
+            
             return NoContent();
+        }
+
+        [HttpPost("{id}/cancel")]
+        public async Task<IActionResult> CancelReservation(string id)
+        {
+            try
+            {
+                await _reservationService.CancelReservationAsync(id);
+                return Ok(new { message = "Reservation cancelled successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpPost("{id}/early-checkout")]
+        public async Task<IActionResult> ProcessEarlyCheckout(string id)
+        {
+            try
+            {
+                await _reservationService.ProcessEarlyCheckoutAsync(id);
+                return Ok(new { message = "Early checkout processed successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        private async Task SyncRoomStatusAsync(ReservationModel res)
+        {
+            var room = await _context.Rooms.FindAsync(res.RoomId);
+            if (room != null)
+            {
+                if (res.RoomStatus == "CheckedIn")
+                {
+                    bool isPaymentVerified = res.PaymentStatus == "Confirmed" || 
+                                           await _context.Payments.AnyAsync(p => p.ReservationId == res.Id && p.VerifiedByUserId != null);
+                    
+                    if (isPaymentVerified)
+                    {
+                        room.Status = "Occupied";
+                    }
+                    else
+                    {
+                        room.Status = "Reserved";
+                    }
+                }
+                else if (res.RoomStatus == "CheckedOut" || res.RoomStatus == "Cancelled")
+                {
+                    room.Status = "Available";
+                    if (res.RoomStatus == "CheckedOut")
+                    {
+                        room.CleanStatus = "Dirty";
+                    }
+                }
+            }
         }
 
         private bool ReservationExists(string id) => _context.Reservations.Any(e => e.Id == id);

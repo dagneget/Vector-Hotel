@@ -11,76 +11,263 @@
         <viewmodels:SettingsViewModel />
     </UserControl.DataContext>
 
-    <Grid Margin="30,20,30,20">
+    <Grid Margin="30,25">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Top Header Area -->
-        <Grid Grid.Row="0" Margin="0,0,0,20">
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Users &amp; Audit Logs" FontSize="28" FontWeight="Bold" Foreground="White" />
-                <TextBlock Text="SYSTEM SECURITY • ROLE MANAGEMENT • ACTIVITY AUDIT" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,0" />
+        <Grid Grid.Row="0" Margin="0,0,0,30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock Text="System Governance" FontSize="32" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" />
+                <TextBlock Text="ACCESS CONTROL • ROLE PERMISSIONS • SECURITY LOGS • BACKUPS" FontSize="11" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,5,0,0" Opacity="0.7" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Command="{Binding BackupCommand}" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Backup" Margin="0,0,8,0" Width="18" Height="18" VerticalAlignment="Center"/>
+                        <TextBlock Text="BACKUP" FontWeight="Black" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                
+                <Button Command="{Binding RestoreCommand}" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource DangerRedBrush}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Restore" Margin="0,0,8,0" Width="18" Height="18" VerticalAlignment="Center"/>
+                        <TextBlock Text="RESTORE" FontWeight="Black" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Grid>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="20" />
-                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="380" />
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="350" />
+                <ColumnDefinition Width="30" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <!-- Users Panel -->
-            <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" BorderThickness="1" BorderBrush="#252525" Padding="20">
+            <Border Grid.Column="0" Style="{StaticResource LuminousCardStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Text="System Users" FontWeight="Bold" FontSize="16" Foreground="White" Margin="0,0,0,15"/>
                     
-                    <DataGrid Grid.Row="1" ItemsSource="{Binding UsersList}" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column"
-                              BorderThickness="0" Background="Transparent" RowHeight="50">
+                    <Grid Grid.Row="0" Margin="0,0,0,15">
+                        <StackPanel>
+                            <TextBlock Text="Authorized Personnel" FontWeight="Black" FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="LOGIN ACCESS CONTROL" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0" />
+                        </StackPanel>
+                        
+                        <Button Command="{Binding DeleteUserCommand}" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource DangerRedBrush}" ToolTip="Delete Selected Staff">
+                            <materialDesign:PackIcon Kind="Delete" Width="22" Height="22" />
+                        </Button>
+                    </Grid>
+                    
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding UsersList}" SelectedItem="{Binding SelectedUser}" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column"
+                              BorderThickness="0" Background="Transparent" RowHeight="55" Margin="0,0,0,15">
                         <DataGrid.ColumnHeaderStyle>
                             <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
                                 <Setter Property="Background" Value="Transparent"/>
                                 <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                                 <Setter Property="FontSize" Value="11"/>
+                                <Setter Property="FontWeight" Value="Black"/>
+                                <Setter Property="Padding" Value="0,0,0,10"/>
                             </Style>
                         </DataGrid.ColumnHeaderStyle>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="USERNAME" Binding="{Binding Username}" Width="*" Foreground="White"/>
-                            <DataGridTextColumn Header="ROLE" Binding="{Binding Role}" Width="*" Foreground="{DynamicResource NocturnalAccentBrush}"/>
+                            <DataGridTemplateColumn Header="USER IDENTIFIER" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Border Width="28" Height="28" CornerRadius="8" Background="{DynamicResource AppBackgroundBrush}" Margin="0,0,10,0">
+                                                <materialDesign:PackIcon Kind="ShieldAccount" Foreground="{DynamicResource LuminousAccentBrush}" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <TextBlock Text="{Binding Username}" FontWeight="Black" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            
+                            <DataGridTemplateColumn Header="ACCESS LEVEL" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid HorizontalAlignment="Right">
+                                            <Border Background="{DynamicResource LuminousAccentBrush}" Opacity="0.1" CornerRadius="6" />
+                                            <TextBlock Text="{Binding Role}" FontSize="9" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" Padding="10,4" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
+
+                    <!-- Row 2: Register New Staff Form -->
+                    <StackPanel Grid.Row="2" Margin="0,10,0,0">
+                        <Border BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,1,0,0" Margin="0,0,0,15" Opacity="0.5" />
+                        <TextBlock Text="PROVISION NEW ACCOUNT" FontSize="11" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,12" />
+                        
+                        <TextBox Text="{Binding FormUsername, UpdateSourceTrigger=PropertyChanged}" materialDesign:HintAssist.Hint="Username" Style="{StaticResource MaterialDesignFilledTextBox}" Margin="0,0,0,10" Background="{DynamicResource AppBackgroundBrush}" />
+                        
+                        <PasswordBox x:Name="StaffPassword" materialDesign:HintAssist.Hint="Password" Style="{StaticResource MaterialDesignFilledPasswordBox}" Margin="0,0,0,10" Background="{DynamicResource AppBackgroundBrush}" />
+                        
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" ItemsSource="{Binding RoleOptions}" SelectedItem="{Binding FormRole}" materialDesign:HintAssist.Hint="Access Level" Style="{StaticResource MaterialDesignFilledComboBox}" Margin="0,0,10,0" Background="{DynamicResource AppBackgroundBrush}"/>
+                            <Button Grid.Column="1" Command="{Binding AddUserCommand}" CommandParameter="{Binding ElementName=StaffPassword}" Style="{StaticResource MaterialDesignFlatButton}" Background="{DynamicResource LuminousAccentBrush}" Foreground="Black" FontWeight="Black" Padding="15,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="AccountPlus" Margin="0,0,6,0" Width="16" Height="16" VerticalAlignment="Center" />
+                                    <TextBlock Text="ADD" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            <!-- Financial Overrides Panel -->
+            <Border Grid.Column="2" Style="{StaticResource LuminousCardStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    
+                    <StackPanel Grid.Row="0" Margin="0,0,0,25">
+                        <TextBlock Text="Financial Policies" FontWeight="Black" FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="TAX RATES • PAYMENT OVERRIDES" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1">
+                        <!-- Tax Rate -->
+                        <TextBlock Text="Tax Rate Configuration" FontSize="11" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,8" />
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Text="{Binding TaxRate, UpdateSourceTrigger=PropertyChanged}" materialDesign:HintAssist.Hint="Tax Rate" Style="{StaticResource MaterialDesignFilledTextBox}" Background="{DynamicResource AppBackgroundBrush}"/>
+                            <TextBlock Grid.Column="1" Text="%" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        </Grid>
+
+                        <Separator Margin="0,0,0,20" Background="{DynamicResource DividerBrush}" Opacity="0.3"/>
+
+                        <!-- Toggles -->
+                        <TextBlock Text="Policy Safeguards" FontSize="11" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,15" />
+                        
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Require Full Payment Before Check-In" FontSize="13" TextWrapping="Wrap" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                            <CheckBox Grid.Column="1" IsChecked="{Binding RequireFullPaymentBeforeCheckIn}" Style="{StaticResource MaterialDesignCheckBox}" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Allow Partial Payments" FontSize="13" TextWrapping="Wrap" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" />
+                            <CheckBox Grid.Column="1" IsChecked="{Binding AllowPartialPayments}" Style="{StaticResource MaterialDesignCheckBox}" />
+                        </Grid>
+                    </StackPanel>
+
+                    <Button Grid.Row="2" Command="{Binding SaveSettingsCommand}" Style="{StaticResource MaterialDesignFlatButton}" Background="{DynamicResource LuminousAccentBrush}" Foreground="Black" FontWeight="Black" VerticalAlignment="Bottom">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="ContentSave" Margin="0,0,8,0" Width="18" Height="18" VerticalAlignment="Center"/>
+                            <TextBlock Text="APPLY CHANGES" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                 </Grid>
             </Border>
 
             <!-- Audit Logs Panel -->
-            <Border Grid.Column="2" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" BorderThickness="1" BorderBrush="#252525" Padding="20">
+            <Border Grid.Column="4" Style="{StaticResource LuminousCardStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Live Security Audit Log" FontWeight="Bold" FontSize="16" Foreground="White" Margin="0,0,0,15"/>
+                    
+                    <Grid Grid.Row="0" Margin="0,0,0,25">
+                        <StackPanel>
+                            <TextBlock Text="Security Audit Stream" FontWeight="Black" FontSize="18" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="LIVE TRANSACTIONAL AND ACCESS HISTORY" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0" />
+                        </StackPanel>
+                        <Grid HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <Border Background="{DynamicResource DangerRedBrush}" Opacity="0.1" CornerRadius="8" />
+                            <StackPanel Orientation="Horizontal" Margin="10,5">
+                                <materialDesign:PackIcon Kind="RadioboxMarked" Width="14" Height="14" Foreground="{DynamicResource DangerRedBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="MONITORING ACTIVE" FontSize="10" FontWeight="Black" Foreground="{DynamicResource DangerRedBrush}" />
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
                     
                     <DataGrid Grid.Row="1" ItemsSource="{Binding AuditLogsList}" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column"
-                              BorderThickness="0" Background="Transparent" RowHeight="45">
+                               BorderThickness="0" Background="Transparent" RowHeight="60">
                         <DataGrid.ColumnHeaderStyle>
                             <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
                                 <Setter Property="Background" Value="Transparent"/>
                                 <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                                 <Setter Property="FontSize" Value="11"/>
+                                <Setter Property="FontWeight" Value="Black"/>
+                                <Setter Property="Padding" Value="0,0,0,15"/>
                             </Style>
                         </DataGrid.ColumnHeaderStyle>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="TIMESTAMP" Binding="{Binding Timestamp, StringFormat=MMM dd yyyy - h:mm tt}" Width="150" Foreground="Gray"/>
-                            <DataGridTextColumn Header="ACTION" Binding="{Binding Action}" Width="120" Foreground="White" FontWeight="Bold"/>
-                            <DataGridTextColumn Header="USER / ROLE" Binding="{Binding UserRole}" Width="150" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <DataGridTextColumn Header="DETAILS" Binding="{Binding Details}" Width="*" Foreground="White"/>
+                            <DataGridTemplateColumn Header="TIMESTAMP" Width="200">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel VerticalAlignment="Center" Margin="0,0,15,0">
+                                            <TextBlock Text="{Binding Timestamp, StringFormat=MMM dd yyyy}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <TextBlock Text="{Binding Timestamp, StringFormat=h:mm:ss tt}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="OPERATION" Width="140">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1" CornerRadius="8" Padding="10,4" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Action}" FontSize="10" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" />
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="EXECUTOR" Width="150">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding UserRole}" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="ACTIVITY DETAILS" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Details}" FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

@@ -17,7 +17,7 @@ namespace HRS.ViewModels
         public string GuestName { get; set; }
         public string RoomNumber { get; set; }
         public DateTime CheckIn => BaseReservation.CheckIn;
-        public string Status => BaseReservation.Status;
+        public string Status => BaseReservation.PaymentStatus ?? "Pending";
         
         public decimal TotalCharges 
         {
@@ -101,6 +101,7 @@ namespace HRS.ViewModels
         public ICommand CancelEditCommand { get; }
         public ICommand VerifyPaymentCommand { get; }
         public ICommand GenerateInvoiceCommand { get; }
+        public ICommand DownloadReceiptCommand { get; }
 
         public PaymentsViewModel()
         {
@@ -109,6 +110,7 @@ namespace HRS.ViewModels
             CancelEditCommand = new RelayCommand(_ => CancelEdit());
             VerifyPaymentCommand = new RelayCommand(_ => VerifyPayment());
             GenerateInvoiceCommand = new RelayCommand(_ => GenerateInvoice());
+            DownloadReceiptCommand = new RelayCommand(_ => DownloadReceipt(), _ => SelectedLineItem?.IsPayment == true);
             LoadData();
         }
 
@@ -196,9 +198,41 @@ namespace HRS.ViewModels
                 return;
             }
 
-            if (FolioBalanceDue <= 0)
+            if (FolioBalanceDue == 0)
             {
-                MessageBox.Show("This folio is already fully paid.");
+                MessageBox.Show("This folio is already fully settled.");
+                return;
+            }
+
+            if (FolioBalanceDue < 0)
+            {
+                var ask = MessageBox.Show($"Are you sure you want to process a REFUND of {Math.Abs(FolioBalanceDue):C}?", "Confirm Refund", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (ask != MessageBoxResult.Yes) return;
+                
+                try 
+                {
+                    var payment = new PaymentModel
+                    {
+                        Id = DataStore.GenerateId(),
+                        ReservationId = SelectedFolio.ReservationId,
+                        Amount = FolioBalanceDue, // Negative represents payback
+                        Date = DateTime.Now,
+                        Method = method,
+                        Status = "Refunded",
+                        RecordedByUserId = AuthService.CurrentUser?.Id
+                    };
+
+                    await ApiService.PostAsync<PaymentModel>("payments", payment);
+                    await DataStore.LoadAsync();
+                    
+                    AuditService.Log("Payment Refunded", $"Refunded {Math.Abs(FolioBalanceDue):C} for {SelectedFolio.GuestName}");
+                    MessageBox.Show($"Refund of {Math.Abs(FolioBalanceDue):C} processed via {method} for {SelectedFolio.GuestName}.");
+                    LoadData();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error processing refund: {ex.Message}");
+                }
                 return;
             }
 
@@ -283,6 +317,81 @@ namespace HRS.ViewModels
             File.WriteAllText(invoiceFile, sb.ToString());
             AuditService.Log("Invoice Generated", $"Accountant generated invoice for {SelectedFolio.GuestName}. File: {invoiceFile}");
             MessageBox.Show($"Invoice successfully generated!\n\nSaved at: {invoiceFile}", "Invoice Created", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void DownloadReceipt()
+        {
+            if (SelectedLineItem?.ActualPayment == null)
+            {
+                MessageBox.Show("Please select a payment to download receipt.", "No Payment Selected", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var payment = SelectedLineItem.ActualPayment;
+            
+            // Create receipts directory in Documents
+            string receiptsFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "HRS_Receipts");
+            Directory.CreateDirectory(receiptsFolder);
+            
+            string receiptFile = Path.Combine(receiptsFolder, $"Receipt_{payment.Id}_{DateTime.Now:yyyyMMdd_HHmmss}.txt");
+
+            var sb = new StringBuilder();
+            sb.AppendLine("==========================================");
+            sb.AppendLine("          PAYMENT RECEIPT                 ");
+            sb.AppendLine("               NOCTURNAL                  ");
+            sb.AppendLine("         Hotel Reservation System         ");
+            sb.AppendLine("==========================================");
+            sb.AppendLine($"Receipt #: {payment.Id}");
+            sb.AppendLine($"Date: {payment.Date:yyyy-MM-dd HH:mm:ss}");
+            sb.AppendLine($"Guest: {SelectedFolio.GuestName}");
+            sb.AppendLine($"Room: {SelectedFolio.RoomNumber}");
+            sb.AppendLine($"Reservation ID: {SelectedFolio.ReservationId}");
+            sb.AppendLine("------------------------------------------");
+            sb.AppendLine("PAYMENT DETAILS:");
+            sb.AppendLine($"  Method: {payment.Method}");
+            sb.AppendLine($"  Amount: {payment.Amount:C}");
+            sb.AppendLine($"  Status: {(payment.VerifiedByUserId != null ? "VERIFIED" : "PENDING")}");
+            sb.AppendLine("------------------------------------------");
+            
+            if (FolioLineItems != null)
+            {
+                sb.AppendLine("FOLIO SUMMARY:");
+                sb.AppendLine($"  Total Charges:  {SelectedFolio.TotalCharges:C}");
+                sb.AppendLine($"  Total Payments: {SelectedFolio.TotalPayments:C}");
+                sb.AppendLine($"  Balance Due:    {FolioBalanceDue:C}");
+                sb.AppendLine("------------------------------------------");
+            }
+            
+            sb.AppendLine($"Recorded By: {AuthService.CurrentUser?.Username?.ToUpper()}");
+            if (payment.VerifiedByUserId != null)
+            {
+                sb.AppendLine($"Verified By: {payment.VerifiedByUserId}");
+            }
+            sb.AppendLine("==========================================");
+            sb.AppendLine("   Thank you for choosing NOCTURNAL!     ");
+            sb.AppendLine("==========================================");
+
+            try
+            {
+                File.WriteAllText(receiptFile, sb.ToString());
+                AuditService.Log("Receipt Downloaded", $"Receipt downloaded for payment {payment.Id} - {SelectedFolio.GuestName}. File: {receiptFile}");
+                
+                // Show success message with option to open folder
+                var result = MessageBox.Show(
+                    $"Receipt successfully downloaded!\n\nSaved at:\n{receiptFile}\n\nWould you like to open the folder?",
+                    "Receipt Downloaded",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Information);
+                
+                if (result == MessageBoxResult.Yes)
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{receiptFile}\"");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving receipt: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

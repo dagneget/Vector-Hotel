@@ -3,41 +3,91 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:viewmodels="clr-namespace:HRS.ViewModels"
-        Title="Login - Nocturnal" Height="550" Width="450"
+        Title="Member Login - Vector Hotel" Height="650" Width="1000"
         WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize"
-        Background="{DynamicResource AppBackgroundBrush}"
+        Background="Transparent"
         Foreground="{DynamicResource TextPrimaryBrush}"
         FontFamily="Segoe UI"
+        AllowsTransparency="True"
         MouseLeftButtonDown="Window_MouseLeftButtonDown">
-        
+    
     <Window.DataContext>
         <viewmodels:LoginViewModel />
     </Window.DataContext>
 
-    <Grid>
-        <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12" Margin="50" Padding="30" BorderThickness="1" BorderBrush="#252525">
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="NOCTURNAL" FontSize="26" FontWeight="Heavy" FontStyle="Italic" Foreground="{DynamicResource NocturnalAccentBrush}" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                <TextBlock Text="CONCIERGE ACCESS" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,40"/>
-                
-                <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
-                         materialDesign:HintAssist.Hint="Username" 
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-                         Margin="0,0,0,20" FontSize="14" Foreground="White" CaretBrush="White"/>
-                         
-                <PasswordBox x:Name="pwdBox"
-                             materialDesign:HintAssist.Hint="Password" 
-                             Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" 
-                             Margin="0,0,0,5" FontSize="14" Foreground="White" CaretBrush="White"/>
-                
-                <TextBlock Text="{Binding ErrorMessage}" Foreground="{DynamicResource DangerRedBrush}" FontSize="12" Height="20" Margin="0,5,0,15" HorizontalAlignment="Center"/>
+    <Border CornerRadius="20" Background="{DynamicResource CardBackgroundBrush}" ClipToBounds="True">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.2*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-                <Button Content="SIGN IN" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=pwdBox}"
-                        Style="{StaticResource MaterialDesignRaisedButton}" Background="{DynamicResource NocturnalAccentBrush}" Foreground="#111111" FontWeight="Bold" Height="45" materialDesign:ButtonAssist.CornerRadius="6" Margin="0,0,0,10"/>
+            <!-- Left Section: Visual Branding -->
+            <Grid Grid.Column="0">
+                <Image Source="pack://application:,,,/Assets/Images/login_bg.png" Stretch="UniformToFill" />
+                <Border Background="#1D4ED8" Opacity="0.4" /> <!-- Transparent overlay -->
                 
-                <Button Content="EXIT" Command="{Binding ExitCommand}"
-                        Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="45" materialDesign:ButtonAssist.CornerRadius="6"/>
-            </StackPanel>
-        </Border>
-    </Grid>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <materialDesign:PackIcon Kind="Star" Foreground="White" Width="80" Height="80" HorizontalAlignment="Center"/>
+                    <TextBlock Text="VECTOR HOTEL" FontSize="36" FontWeight="Black" Foreground="White" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                    <TextBlock Text="THE NEW STANDARD IN CONCIERGE" FontSize="14" FontWeight="Bold" Foreground="White" Opacity="0.9" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                </StackPanel>
+                
+                <TextBlock Text="© 2026 VECTOR HOSPITALITY GROUP" FontSize="10" Foreground="White" Opacity="0.6" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30" FontWeight="Bold"/>
+            </Grid>
+
+            <!-- Right Section: Login Form -->
+            <Grid Grid.Column="1" Margin="60,0">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Welcome Back" FontSize="32" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10"/>
+                    <TextBlock Text="Please sign in to access your dashboard" FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,40"/>
+
+                    <StackPanel Margin="0,0,0,25">
+                        <TextBlock Text="USERNAME" FontSize="11" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,8" Opacity="0.8"/>
+                        <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
+                                 materialDesign:HintAssist.Hint="Enter your username" 
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}" 
+                                 Height="55" FontSize="14" materialDesign:TextFieldAssist.HasClearButton="True"
+                                 materialDesign:ButtonAssist.CornerRadius="12"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,0,0,10">
+                        <TextBlock Text="PASSWORD" FontSize="11" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,8" Opacity="0.8"/>
+                        <PasswordBox x:Name="pwdBox"
+                                     materialDesign:HintAssist.Hint="Enter your password" 
+                                     Style="{StaticResource MaterialDesignOutlinedPasswordBox}" 
+                                     Height="55" FontSize="14"
+                                     materialDesign:ButtonAssist.CornerRadius="12"/>
+                    </StackPanel>
+
+                    <!-- Information Space -->
+                    <Grid Height="40">
+                         <StackPanel Orientation="Horizontal">
+                             <StackPanel.Style>
+                                 <Style TargetType="StackPanel">
+                                     <Setter Property="Visibility" Value="Visible" />
+                                     <Style.Triggers>
+                                         <DataTrigger Binding="{Binding ErrorMessage}" Value="{x:Null}">
+                                             <Setter Property="Visibility" Value="Collapsed" />
+                                         </DataTrigger>
+                                         <DataTrigger Binding="{Binding ErrorMessage}" Value="">
+                                             <Setter Property="Visibility" Value="Collapsed" />
+                                         </DataTrigger>
+                                     </Style.Triggers>
+                                 </Style>
+                             </StackPanel.Style>
+                             <materialDesign:PackIcon Kind="AlertCircle" Foreground="{DynamicResource DangerRedBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                             <TextBlock Text="{Binding ErrorMessage}" Foreground="{DynamicResource DangerRedBrush}" FontSize="12" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                         </StackPanel>
+                    </Grid>
+
+                    <Button Content="SIGN IN TO SYSTEM" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=pwdBox}"
+                            Style="{StaticResource LuminousRaisedButtonStyle}" Height="60" materialDesign:ButtonAssist.CornerRadius="12" Margin="0,0,0,20" FontSize="14" FontWeight="Bold"/>
+                    
+                    <Button Content="EXIT SYSTEM" Command="{Binding ExitCommand}"
+                            Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Height="50" materialDesign:ButtonAssist.CornerRadius="12" FontSize="13" FontWeight="SemiBold"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
 </Window>

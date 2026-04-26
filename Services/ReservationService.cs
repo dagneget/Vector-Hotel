@@ -12,8 +12,8 @@ namespace HRS.Services
         {
             var overlapping = DataStore.Data.Reservations.Where(r => 
                 r.RoomId == roomId && 
-                r.Status != "Cancelled" && 
-                r.Status != "CheckedOut" &&
+                r.RoomStatus != "Cancelled" && 
+                r.RoomStatus != "CheckedOut" &&
                 r.Id != excludeReservationId &&
                 (
                     (checkIn >= r.CheckIn && checkIn < r.CheckOut) ||
@@ -46,7 +46,8 @@ namespace HRS.Services
 
         public static async Task<bool> ChangeReservationStateAsync(ReservationModel res, string newStatus)
         {
-            if (res.Status == newStatus) return true;
+            if ((newStatus == "Pending" || newStatus == "Confirmed") && res.PaymentStatus == newStatus) return true;
+            if ((newStatus == "CheckedIn" || newStatus == "CheckedOut" || newStatus == "Cancelled") && res.RoomStatus == newStatus) return true;
 
             try 
             {

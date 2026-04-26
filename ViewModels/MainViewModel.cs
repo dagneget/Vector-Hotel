@@ -1,5 +1,6 @@
 using System.Windows.Input;
 using HRS.Services;
+using MaterialDesignThemes.Wpf;
 
 namespace HRS.ViewModels
 {
@@ -9,11 +10,47 @@ namespace HRS.ViewModels
         public ViewModelBase CurrentViewModel
         {
             get => _currentViewModel;
-            set => SetProperty(ref _currentViewModel, value);
+            set
+            {
+                if (SetProperty(ref _currentViewModel, value))
+                {
+                    // Notify all active state properties changed
+                    OnPropertyChanged(nameof(IsDashboardActive));
+                    OnPropertyChanged(nameof(IsReservationsActive));
+                    OnPropertyChanged(nameof(IsRoomsActive));
+                    OnPropertyChanged(nameof(IsCustomersActive));
+                    OnPropertyChanged(nameof(IsPaymentsActive));
+                    OnPropertyChanged(nameof(IsReportsActive));
+                    OnPropertyChanged(nameof(IsSettingsActive));
+                }
+            }
         }
+
+        // Active view indicators for sidebar highlighting
+        public bool IsDashboardActive => CurrentViewModel is DashboardViewModel;
+        public bool IsReservationsActive => CurrentViewModel is ReservationsViewModel;
+        public bool IsRoomsActive => CurrentViewModel is RoomsViewModel;
+        public bool IsCustomersActive => CurrentViewModel is CustomersViewModel;
+        public bool IsPaymentsActive => CurrentViewModel is PaymentsViewModel;
+        public bool IsReportsActive => CurrentViewModel is ReportsViewModel;
+        public bool IsSettingsActive => CurrentViewModel is SettingsViewModel;
 
         public string CurrentUserName => AuthService.CurrentUser?.Username?.ToUpper() ?? "UNKNOWN";
         public string CurrentUserRole => AuthService.CurrentUser?.Role?.ToUpper() ?? "GUEST";
+
+        private bool _isNotificationsOpen;
+        public bool IsNotificationsOpen
+        {
+            get => _isNotificationsOpen;
+            set { _isNotificationsOpen = value; OnPropertyChanged(nameof(IsNotificationsOpen)); }
+        }
+
+        public System.Collections.ObjectModel.ObservableCollection<Models.AuditLogModel> RecentNotifications => DataStore.Data.AuditLogs;
+
+        // Theme Properties
+        public bool IsDarkMode => ThemeManager.IsDarkMode;
+        public PackIconKind ThemeIcon => IsDarkMode ? PackIconKind.WeatherSunny : PackIconKind.MoonWaningCrescent;
+        public string ThemeTooltip => IsDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode";
 
         public bool IsAdmin => AuthService.IsAdmin();
         public bool IsReceptionist => AuthService.IsReceptionist();
@@ -34,6 +71,9 @@ namespace HRS.ViewModels
         public ICommand NavigateReportsCommand { get; }
         public ICommand NavigateSettingsCommand { get; }
         public ICommand LogoutCommand { get; }
+        public ICommand ToggleThemeCommand { get; }
+        public ICommand ToggleNotificationsCommand { get; }
+        public ICommand OpenProfileCommand { get; }
 
         public MainViewModel()
         {
@@ -49,6 +89,54 @@ namespace HRS.ViewModels
             NavigateReportsCommand      = new RelayCommand(_ => CurrentViewModel = new ReportsViewModel());
             NavigateSettingsCommand     = new RelayCommand(_ => CurrentViewModel = new SettingsViewModel());
             LogoutCommand               = new RelayCommand(_ => Logout());
+            ToggleThemeCommand          = new RelayCommand(_ => ToggleTheme());
+            ToggleNotificationsCommand  = new RelayCommand(_ => IsNotificationsOpen = !IsNotificationsOpen);
+            OpenProfileCommand          = new RelayCommand(_ => OpenProfileDialog());
+
+            // Subscribe to theme changes
+            ThemeManager.ThemeChanged += isDark =>
+            {
+                OnPropertyChanged(nameof(IsDarkMode));
+                OnPropertyChanged(nameof(ThemeIcon));
+                OnPropertyChanged(nameof(ThemeTooltip));
+            };
+
+            // Dashboard "VIEW ALL" button fires this event to navigate here
+            EventBus.Instance.NavigateToReservationsRequested += () =>
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                    CurrentViewModel = new ReservationsViewModel());
+
+            // Dashboard FAB button fires this event to create new reservation
+            EventBus.Instance.NewReservationRequested += () =>
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var vm = new ReservationsViewModel();
+                    CurrentViewModel = vm;
+                    vm.TriggerNewReservation();
+                });
+
+            // Handle navigation to specific customer from detail popup
+            EventBus.Instance.NavigateToCustomerRequested += customerId =>
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var vm = new CustomersViewModel();
+                    CurrentViewModel = vm;
+                    vm.SelectCustomerById(customerId);
+                });
+
+            // Handle navigation to specific room from detail popup
+            EventBus.Instance.NavigateToRoomRequested += roomId =>
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var vm = new RoomsViewModel();
+                    CurrentViewModel = vm;
+                    vm.SelectRoomById(roomId);
+                });
+        }
+
+        private void ToggleTheme()
+        {
+            ThemeManager.ToggleTheme();
         }
 
         private void Logout()
@@ -65,6 +153,12 @@ namespace HRS.ViewModels
                     break;
                 }
             }
+        }
+
+        private void OpenProfileDialog()
+        {
+            var profileWindow = new Views.ProfileWindow();
+            profileWindow.ShowDialog();
         }
     }
 }

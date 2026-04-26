@@ -181,5 +181,27 @@ namespace HRS.ViewModels
                 }
             }
         }
+
+        public void SelectCustomerById(string customerId)
+        {
+            var customer = DataStore.Data.Customers.FirstOrDefault(c => c.Id == customerId);
+            if (customer != null)
+            {
+                SelectedCustomer = customer;
+                EditingContext = new CustomerModel
+                {
+                    Id = customer.Id,
+                    FullName = customer.FullName,
+                    Email = customer.Email,
+                    Phone = customer.Phone,
+                    Address = customer.Address,
+                    PassportNumber = customer.PassportNumber,
+                    Status = customer.Status,
+                    CustomerType = customer.CustomerType,
+                    CreatedDate = customer.CreatedDate
+                };
+                IsEditing = true;
+            }
+        }
     }
 }
