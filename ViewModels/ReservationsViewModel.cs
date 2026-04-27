@@ -579,21 +579,10 @@ namespace HRS.ViewModels
 
         private async void Save()
         {
-            if (FormCheckInDate.Date < DateTime.Today)
+            if (!IsValid)
             {
-                MessageBox.Show("Check-in date cannot be in the past.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            if (FormCheckOutDate.Date <= FormCheckInDate.Date)
-            {
-                MessageBox.Show("Check-out date must be after the check-in date.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            if (FormSelectedCustomer == null || FormSelectedRoom == null)
-            {
-                MessageBox.Show("Please complete all required fields correctly.");
+                var errors = string.Join("\n", AllErrors);
+                MessageBox.Show($"Please fix the following errors:\n\n{errors}", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -641,6 +630,44 @@ namespace HRS.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show($"Error saving reservation: {ex.Message}");
+            }
+        }
+
+        // --- Validation Logic ---
+        protected override void ValidateProperty(string propertyName)
+        {
+            RemoveError(propertyName);
+
+            switch (propertyName)
+            {
+                case nameof(FormCheckInDate):
+                    if (FormCheckInDate.Date < DateTime.Today)
+                        AddError(propertyName, "Check-in date cannot be in the past.");
+                    break;
+
+                case nameof(FormCheckOutDate):
+                    if (FormCheckOutDate.Date <= FormCheckInDate.Date)
+                        AddError(propertyName, "Check-out must be after check-in.");
+                    break;
+
+                case nameof(FormSelectedCustomer):
+                    if (FormSelectedCustomer == null)
+                        AddError(propertyName, "A customer must be selected.");
+                    else if (FormSelectedCustomer.IsBlacklisted)
+                        AddError(propertyName, $"Guest {FormSelectedCustomer.FullName} is BLACKLISTED: {FormSelectedCustomer.BlacklistReason}");
+                    break;
+
+                case nameof(FormSelectedRoom):
+                    if (FormSelectedRoom == null)
+                        AddError(propertyName, "A room must be selected.");
+                    break;
+
+                case nameof(FormAdultsCount):
+                    if (FormAdultsCount <= 0)
+                        AddError(propertyName, "Adults count must be at least 1.");
+                    else if (FormSelectedRoom != null && FormAdultsCount > FormSelectedRoom.MaxOccupancy)
+                        AddError(propertyName, $"Selected room capacity is {FormSelectedRoom.MaxOccupancy} persons.");
+                    break;
             }
         }
 

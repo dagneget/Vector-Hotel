@@ -168,9 +168,10 @@ namespace HRS.ViewModels
 
         private async void SaveCustomer()
         {
-            if (string.IsNullOrWhiteSpace(EditingContext.FullName) || string.IsNullOrWhiteSpace(EditingContext.Phone))
+            if (!EditingContext.IsValid)
             {
-                MessageBox.Show("Full Name and Phone Number are required.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                var errors = string.Join("\n", EditingContext.AllErrors);
+                MessageBox.Show($"Please fix the following errors:\n\n{errors}", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 

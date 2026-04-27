@@ -1,23 +1,45 @@
 using System;
+using System.Text.RegularExpressions;
+using HRS.ViewModels;
 
 namespace HRS.Models
 {
-    public class CustomerModel
+    public class CustomerModel : ViewModelBase
     {
         // ── Core ───────────────────────────────────────────────────────────────
-        public string Id { get; set; }
-        public string FullName { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
-        public string Gender { get; set; }          // Male, Female, Other, Prefer not to say
-        public string Nationality { get; set; }
-        public string Address { get; set; }
+        private string _id;
+        public string Id { get => _id; set => SetProperty(ref _id, value); }
+        
+        private string _fullName;
+        public string FullName { get => _fullName; set => SetProperty(ref _fullName, value); }
+        
+        private string _phone;
+        public string Phone { get => _phone; set => SetProperty(ref _phone, value); }
+        
+        private string _email;
+        public string Email { get => _email; set => SetProperty(ref _email, value); }
+        
+        private string _gender;
+        public string Gender { get => _gender; set => SetProperty(ref _gender, value); }
+        
+        private string _nationality;
+        public string Nationality { get => _nationality; set => SetProperty(ref _nationality, value); }
+        
+        private string _address;
+        public string Address { get => _address; set => SetProperty(ref _address, value); }
+
+        // ... continue with other properties if needed, but these are the main ones for validation ...
 
         // ── Identity ──────────────────────────────────────────────────────────
-        public string IdType { get; set; }          // Passport, National ID, Driver's License, Other
-        public string IdNumber { get; set; }
-        public DateTime? IdExpiryDate { get; set; }
-        /// <summary>Legacy field — kept for JSON backwards compatibility. Use IdNumber.</summary>
+        private string _idType;
+        public string IdType { get => _idType; set => SetProperty(ref _idType, value); }
+        
+        private string _idNumber;
+        public string IdNumber { get => _idNumber; set => SetProperty(ref _idNumber, value); }
+        
+        private DateTime? _idExpiryDate;
+        public DateTime? IdExpiryDate { get => _idExpiryDate; set => SetProperty(ref _idExpiryDate, value); }
+        
         public string PassportNumber { get; set; }
 
         // ── Extended Profile ──────────────────────────────────────────────────
@@ -29,8 +51,12 @@ namespace HRS.Models
         public string Notes { get; set; }
 
         // ── Classification ────────────────────────────────────────────────────
-        public string CustomerType { get; set; }    // Regular, VIP, Corporate
-        public string Status { get; set; }          // Active, Inactive
+        private string _customerType;
+        public string CustomerType { get => _customerType; set => SetProperty(ref _customerType, value); }
+        
+        private string _status;
+        public string Status { get => _status; set => SetProperty(ref _status, value); }
+        
         public bool IsBlacklisted { get; set; }
         public string BlacklistReason { get; set; }
 
@@ -43,9 +69,50 @@ namespace HRS.Models
         // ── Loyalty ───────────────────────────────────────────────────────────
         public int LoyaltyPoints { get; set; }
         public string LoyaltyTier { get; set; }     // None, Silver, Gold, Platinum
-
+        
         // ── Tracking ──────────────────────────────────────────────────────────
         public DateTime? CreatedDate { get; set; }
         public DateTime? LastVisitDate { get; set; }
+
+        // ── Validation Logic ──────────────────────────────────────────────────
+        protected override void ValidateProperty(string propertyName)
+        {
+            RemoveError(propertyName);
+
+            switch (propertyName)
+            {
+                case nameof(FullName):
+                    if (string.IsNullOrWhiteSpace(FullName))
+                        AddError(propertyName, "Full Name is required.");
+                    else if (FullName.Length < 3)
+                        AddError(propertyName, "Name is too short.");
+                    break;
+
+                case nameof(Phone):
+                    if (string.IsNullOrWhiteSpace(Phone))
+                        AddError(propertyName, "Phone Number is required.");
+                    else if (!Regex.IsMatch(Phone, @"^\+?[0-9]{7,15}$"))
+                        AddError(propertyName, "Invalid phone format (7-15 digits).");
+                    break;
+
+                case nameof(Email):
+                    if (!string.IsNullOrWhiteSpace(Email))
+                    {
+                        if (!Regex.IsMatch(Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                            AddError(propertyName, "Invalid email format.");
+                    }
+                    break;
+
+                case nameof(IdNumber):
+                    if (string.IsNullOrWhiteSpace(IdNumber))
+                        AddError(propertyName, "ID Number is required.");
+                    break;
+
+                case nameof(IdType):
+                    if (string.IsNullOrWhiteSpace(IdType))
+                        AddError(propertyName, "ID Type is required.");
+                    break;
+            }
+        }
     }
 }

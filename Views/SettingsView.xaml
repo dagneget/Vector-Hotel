@@ -196,6 +196,45 @@
                     </Button>
                 </Grid>
             </Border>
+            <!-- Data Export Panel -->
+            <Border Grid.Column="3" Style="{StaticResource LuminousCardStyle}" Margin="40,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,25">
+                        <TextBlock Text="Advanced Data Export" FontWeight="Black" FontSize="16" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <TextBlock Text="SELECTIVE DATA • TIME-SPECIFIC FILTERING" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1">
+                        <TextBlock Text="DATA CATEGORIES" FontSize="11" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12" />
+                        
+                        <CheckBox Content="Include Rooms Inventory" IsChecked="{Binding ExportRooms}" Margin="0,0,0,8" />
+                        <CheckBox Content="Include Guest Database" IsChecked="{Binding ExportGuests}" Margin="0,0,0,8" />
+                        <CheckBox Content="Include Reservations Log" IsChecked="{Binding ExportReservations}" Margin="0,0,0,15" />
+
+                        <Separator Margin="0,5,0,20" Background="{DynamicResource DividerBrush}" Opacity="0.3"/>
+
+                        <TextBlock Text="TIME RANGE (RESERVATIONS)" FontSize="11" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12" />
+                        
+                        <DatePicker materialDesign:HintAssist.Hint="From Date" SelectedDate="{Binding ExportStartDate}" Style="{StaticResource MaterialDesignFilledDatePicker}" Margin="0,0,0,10" Background="{DynamicResource AppBackgroundBrush}" />
+                        <DatePicker materialDesign:HintAssist.Hint="To Date" SelectedDate="{Binding ExportEndDate}" Style="{StaticResource MaterialDesignFilledDatePicker}" Margin="0,0,0,20" Background="{DynamicResource AppBackgroundBrush}" />
+                        
+                        <TextBlock Text="* Exported as formatted text for reporting and archival purposes." FontSize="10" FontStyle="Italic" TextWrapping="Wrap" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.8" />
+                    </StackPanel>
+
+                    <Button Grid.Row="2" Command="{Binding ExportDataCommand}" Style="{StaticResource MaterialDesignFlatButton}" Background="{DynamicResource LuminousAccentBrush}" Foreground="Black" FontWeight="Black" VerticalAlignment="Bottom">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="FileExport" Margin="0,0,8,0" Width="18" Height="18" VerticalAlignment="Center"/>
+                            <TextBlock Text="EXPORT TO TEXT" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
         </Grid>
     </Grid>
 </UserControl>

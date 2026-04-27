@@ -129,6 +129,8 @@ namespace HRS.ViewModels
         public bool IsAdmin => AuthService.IsAdmin();
         public bool CanProcessPayments => IsAccountant || IsAdmin;
         
+        public string HotelName => DataStore.Data.HotelInfo?.HotelName ?? "VECTOR HOTEL";
+        
         // --- Analytics ---
         public decimal CashTotal => DataStore.Data.Payments.Where(p => p.Method == "Cash").Sum(p => p.Amount);
         public decimal CardTotal => DataStore.Data.Payments.Where(p => p.Method == "Credit Card").Sum(p => p.Amount);
@@ -172,8 +174,6 @@ namespace HRS.ViewModels
         public ICommand EarlyCheckoutCommand { get; }
         public ICommand ViewPaymentCommand { get; }
         public ICommand EditPaymentCommand { get; }
-        public ICommand AddChargeCommand { get; }
-        public ICommand AddDiscountCommand { get; }
 
         public PaymentsViewModel()
         {
@@ -188,8 +188,6 @@ namespace HRS.ViewModels
             EarlyCheckoutCommand = new RelayCommand(_ => ProcessEarlyCheckout());
             ViewPaymentCommand = new RelayCommand(f => { SelectedFolio = f as FolioDisplayModel; IsViewingDetails = true; IsEditing = false; });
             EditPaymentCommand = new RelayCommand(f => { SelectedFolio = f as FolioDisplayModel; IsEditing = true; IsViewingDetails = false; });
-            AddChargeCommand = new RelayCommand(desc => AddAdjustment(desc as string, false));
-            AddDiscountCommand = new RelayCommand(desc => AddAdjustment(desc as string, true));
             LoadData();
         }
 
@@ -351,7 +349,7 @@ namespace HRS.ViewModels
             var sb = new StringBuilder();
             sb.AppendLine("==========================================");
             sb.AppendLine("            OFFICIAL INVOICE              ");
-            sb.AppendLine("               NOCTURNAL                  ");
+            sb.AppendLine($"               {HotelName?.ToUpper() ?? "VECTOR HOTEL"}                  ");
             sb.AppendLine("==========================================");
             sb.AppendLine($"Date: {DateTime.Now}");
             sb.AppendLine($"Guest: {SelectedFolio.GuestName}");
@@ -394,7 +392,7 @@ namespace HRS.ViewModels
             var sb = new StringBuilder();
             sb.AppendLine("==========================================");
             sb.AppendLine("          PAYMENT RECEIPT                 ");
-            sb.AppendLine("               NOCTURNAL                  ");
+            sb.AppendLine($"               {HotelName?.ToUpper() ?? "VECTOR HOTEL"}                  ");
             sb.AppendLine("         Hotel Reservation System         ");
             sb.AppendLine("==========================================");
             sb.AppendLine($"Receipt #: {payment.Id}");
@@ -424,7 +422,7 @@ namespace HRS.ViewModels
                 sb.AppendLine($"Verified By: {payment.VerifiedByUserId}");
             }
             sb.AppendLine("==========================================");
-            sb.AppendLine("   Thank you for choosing NOCTURNAL!     ");
+            sb.AppendLine($"   Thank you for choosing {HotelName?.ToUpper() ?? "VECTOR HOTEL"}!     ");
             sb.AppendLine("==========================================");
 
             try
@@ -452,47 +450,41 @@ namespace HRS.ViewModels
 
         private void ProcessCustomPayment()
         {
-            if (!decimal.TryParse(CustomPaymentAmount, out decimal amount) || amount <= 0)
+            if (!IsValid)
             {
-                MessageBox.Show("Please enter a valid payment amount.");
+                var errors = string.Join("\n", AllErrors);
+                MessageBox.Show($"Please fix the following errors:\n\n{errors}", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            
-            ProcessPayment("Credit Card", amount);
-            CustomPaymentAmount = "";
+
+            if (decimal.TryParse(CustomPaymentAmount, out decimal amount))
+            {
+                ProcessPayment("Credit Card", amount);
+                CustomPaymentAmount = "";
+            }
         }
 
-        private async void AddAdjustment(string description, bool isDiscount)
+        // --- Validation Logic ---
+        protected override void ValidateProperty(string propertyName)
         {
-            if (!CanProcessPayments)
-            {
-                MessageBox.Show("Access Denied: Only Accountants or Admins can adjust folios.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            if (SelectedFolio == null) return;
-            if (string.IsNullOrWhiteSpace(description)) return;
+            RemoveError(propertyName);
 
-            decimal amount = 10.0m; // Mock amount for quick adjustments
-            if (isDiscount) amount = -amount;
-
-            try
+            switch (propertyName)
             {
-                var charge = new ChargeModel
-                {
-                    Id = DataStore.GenerateId(),
-                    ReservationId = SelectedFolio.ReservationId,
-                    Description = description,
-                    Amount = amount,
-                    Date = DateTime.Now
-                };
-                await ApiService.PostAsync<ChargeModel>("charges", charge);
-                await DataStore.LoadAsync();
-                
-                AuditService.Log("Folio Adjusted", $"Added {description} ({amount:C}) to {SelectedFolio.GuestName}");
-                PopulateFolio(SelectedFolio);
+                case nameof(CustomPaymentAmount):
+                    if (string.IsNullOrWhiteSpace(CustomPaymentAmount))
+                        break;
+
+                    if (!decimal.TryParse(CustomPaymentAmount, out decimal amount))
+                        AddError(propertyName, "Must be a valid number.");
+                    else if (amount <= 0)
+                        AddError(propertyName, "Payment must be greater than zero.");
+                    else if (amount > FolioBalanceDue && FolioBalanceDue > 0)
+                        AddError(propertyName, $"Payment exceeds balance due ({FolioBalanceDue:C}).");
+                    break;
             }
-            catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
+
 
         private async void SendEmailInvoice()
         {

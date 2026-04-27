@@ -41,6 +41,22 @@ namespace HRS.ViewModels
         private bool _allowPartialPayments;
         public bool AllowPartialPayments { get => _allowPartialPayments; set => SetProperty(ref _allowPartialPayments, value); }
 
+        // --- Export Settings ---
+        private bool _exportRooms = true;
+        public bool ExportRooms { get => _exportRooms; set => SetProperty(ref _exportRooms, value); }
+
+        private bool _exportGuests = true;
+        public bool ExportGuests { get => _exportGuests; set => SetProperty(ref _exportGuests, value); }
+
+        private bool _exportReservations = true;
+        public bool ExportReservations { get => _exportReservations; set => SetProperty(ref _exportReservations, value); }
+
+        private DateTime? _exportStartDate = DateTime.Now.AddMonths(-1);
+        public DateTime? ExportStartDate { get => _exportStartDate; set => SetProperty(ref _exportStartDate, value); }
+
+        private DateTime? _exportEndDate = DateTime.Now;
+        public DateTime? ExportEndDate { get => _exportEndDate; set => SetProperty(ref _exportEndDate, value); }
+
         private SettingsModel _currentSettings;
 
         // --- User Form Properties ---
@@ -79,6 +95,7 @@ namespace HRS.ViewModels
         public ICommand RestoreCommand { get; }
         public ICommand AddUserCommand { get; }
         public ICommand DeleteUserCommand { get; }
+        public ICommand ExportDataCommand { get; }
 
         public SettingsViewModel()
         {
@@ -89,6 +106,7 @@ namespace HRS.ViewModels
             RestoreCommand = new RelayCommand(_ => RestoreDatabase());
             AddUserCommand = new RelayCommand(AddUser);
             DeleteUserCommand = new RelayCommand(_ => DeleteSelectedUser());
+            ExportDataCommand = new RelayCommand(_ => ExportData());
 
             FormRole = RoleOptions.FirstOrDefault();
 
@@ -121,6 +139,13 @@ namespace HRS.ViewModels
 
         private async void SaveSettings()
         {
+            if (!IsValid)
+            {
+                var errors = string.Join("\n", AllErrors);
+                MessageBox.Show($"Please fix the following errors:\n\n{errors}", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (_currentSettings == null) _currentSettings = new SettingsModel();
 
             _currentSettings.HotelName = HotelName;
@@ -218,6 +243,12 @@ namespace HRS.ViewModels
                 return;
             }
 
+            if (DataStore.Data.Users.Any(u => u.Username.Equals(FormUsername, StringComparison.OrdinalIgnoreCase)))
+            {
+                MessageBox.Show("Username already exists.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             var newUser = new UserModel
             {
                 Id = Guid.NewGuid().ToString(),
@@ -243,6 +274,123 @@ namespace HRS.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show($"Error creating user: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // --- Validation Logic ---
+        protected override void ValidateProperty(string propertyName)
+        {
+            RemoveError(propertyName);
+
+            switch (propertyName)
+            {
+                case nameof(HotelName):
+                    if (string.IsNullOrWhiteSpace(HotelName))
+                        AddError(propertyName, "Hotel Name is required.");
+                    break;
+
+                case nameof(HotelEmail):
+                    if (!string.IsNullOrWhiteSpace(HotelEmail) && !System.Text.RegularExpressions.Regex.IsMatch(HotelEmail, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                        AddError(propertyName, "Invalid email format.");
+                    break;
+
+                case nameof(FormUsername):
+                    if (string.IsNullOrWhiteSpace(FormUsername))
+                        AddError(propertyName, "Username is required.");
+                    else if (FormUsername.Length < 3)
+                        AddError(propertyName, "Username must be at least 3 characters.");
+                    break;
+
+                case nameof(TaxRate):
+                    if (TaxRate < 0 || TaxRate > 100)
+                        AddError(propertyName, "Tax rate must be between 0 and 100.");
+                    break;
+            }
+        }
+
+        private void ExportData()
+        {
+            if (!ExportRooms && !ExportGuests && !ExportReservations)
+            {
+                MessageBox.Show("Please select at least one item to export.", "Selection Required", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            SaveFileDialog sfd = new SaveFileDialog
+            {
+                Filter = "Text Files (*.txt)|*.txt|CSV Files (*.csv)|*.csv",
+                FileName = $"Hotel_Export_{DateTime.Now:yyyyMMdd}.txt",
+                Title = "Export System Data"
+            };
+
+            if (sfd.ShowDialog() == true)
+            {
+                try
+                {
+                    var sb = new System.Text.StringBuilder();
+                    sb.AppendLine("=================================================================================");
+                    sb.AppendLine($"               HOTEL DATA EXPORT - {HotelName?.ToUpper()}");
+                    sb.AppendLine($"               Generated on: {DateTime.Now}");
+                    sb.AppendLine("=================================================================================");
+                    sb.AppendLine();
+
+                    if (ExportRooms)
+                    {
+                        sb.AppendLine("--- ROOMS INVENTORY ---");
+                        sb.AppendLine(string.Format("{0,-10} | {1,-15} | {2,-10} | {3,-10} | {4,-15}", "Number", "Type", "Floor", "Price", "Status"));
+                        sb.AppendLine(new string('-', 70));
+                        foreach (var r in DataStore.Data.Rooms)
+                        {
+                            var type = DataStore.Data.RoomTypes.FirstOrDefault(t => t.Id == r.TypeId)?.Name ?? "Unknown";
+                            sb.AppendLine(string.Format("{0,-10} | {1,-15} | {2,-10} | {3,-10:C} | {4,-15}", r.RoomNumber, type, r.FloorNumber, r.BasePricePerNight, r.Status));
+                        }
+                        sb.AppendLine();
+                    }
+
+                    if (ExportGuests)
+                    {
+                        sb.AppendLine("--- GUEST DATABASE ---");
+                        sb.AppendLine(string.Format("{0,-20} | {1,-15} | {2,-25} | {3,-10}", "Full Name", "Phone", "Email", "Status"));
+                        sb.AppendLine(new string('-', 80));
+                        foreach (var g in DataStore.Data.Customers)
+                        {
+                            string status = g.IsBlacklisted ? "BLACKLISTED" : "REGULAR";
+                            sb.AppendLine(string.Format("{0,-20} | {1,-15} | {2,-25} | {3,-10}", g.FullName, g.Phone, g.Email ?? "N/A", status));
+                        }
+                        sb.AppendLine();
+                    }
+
+                    if (ExportReservations)
+                    {
+                        sb.AppendLine("--- RESERVATIONS LOG ---");
+                        if (ExportStartDate.HasValue || ExportEndDate.HasValue)
+                        {
+                            sb.AppendLine($"Filter: {ExportStartDate?.ToShortDateString() ?? "Start"} to {ExportEndDate?.ToShortDateString() ?? "End"}");
+                        }
+                        sb.AppendLine(string.Format("{0,-10} | {1,-20} | {2,-10} | {3,-12} | {4,-12} | {5,-10}", "ID", "Guest", "Room", "Check-In", "Check-Out", "Total"));
+                        sb.AppendLine(new string('-', 90));
+                        
+                        var resList = DataStore.Data.Reservations.AsEnumerable();
+                        if (ExportStartDate.HasValue) resList = resList.Where(r => r.CheckIn >= ExportStartDate.Value);
+                        if (ExportEndDate.HasValue) resList = resList.Where(r => r.CheckIn <= ExportEndDate.Value);
+
+                        foreach (var r in resList)
+                        {
+                            var guest = DataStore.Data.Customers.FirstOrDefault(c => c.Id == r.CustomerId)?.FullName ?? "Unknown";
+                            var room = DataStore.Data.Rooms.FirstOrDefault(rm => rm.Id == r.RoomId)?.RoomNumber ?? "N/A";
+                            sb.AppendLine(string.Format("{0,-10} | {1,-20} | {2,-10} | {3,-12:yyyy-MM-dd} | {4,-12:yyyy-MM-dd} | {5,-10:C}", r.Id.Substring(0,Math.Min(r.Id.Length,8)), guest, room, r.CheckIn, r.CheckOut, r.TotalPrice));
+                        }
+                        sb.AppendLine();
+                    }
+
+                    File.WriteAllText(sfd.FileName, sb.ToString());
+                    AuditService.Log("Data Exported", $"Exported selected system data to {Path.GetFileName(sfd.FileName)}");
+                    MessageBox.Show("Data successfully exported!", "Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Export failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

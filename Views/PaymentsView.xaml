@@ -237,20 +237,6 @@
                                       materialDesign:TextFieldAssist.DecorationVisibility="Collapsed" FontSize="12" FontWeight="Bold"/>
                         </Grid>
 
-                        <!-- Quick Adjustments -->
-                        <StackPanel Margin="20,0,20,20" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <TextBlock Text="QUICK ADJUSTMENTS" FontSize="9" FontWeight="Black" Opacity="0.6" Margin="0,0,0,10"/>
-                            <UniformGrid Columns="2">
-                                <Button Content="+ MINI-BAR" Command="{Binding AddChargeCommand}" CommandParameter="Mini-bar Charge" 
-                                        Style="{StaticResource MaterialDesignFlatButton}" FontSize="10" Height="30" Foreground="{DynamicResource NocturnalAccentBrush}"/>
-                                <Button Content="+ LAUNDRY" Command="{Binding AddChargeCommand}" CommandParameter="Laundry Service" 
-                                        Style="{StaticResource MaterialDesignFlatButton}" FontSize="10" Height="30" Foreground="{DynamicResource NocturnalAccentBrush}"/>
-                                <Button Content="- DISCOUNT" Command="{Binding AddDiscountCommand}" CommandParameter="Manager Adjustment" 
-                                        Style="{StaticResource MaterialDesignFlatButton}" FontSize="10" Height="30" Foreground="{DynamicResource SuccessGreenBrush}"/>
-                                <Button Content="+ DAMAGE" Command="{Binding AddChargeCommand}" CommandParameter="Damage Penalty" 
-                                        Style="{StaticResource MaterialDesignFlatButton}" FontSize="10" Height="30" Foreground="{DynamicResource DangerRedBrush}"/>
-                            </UniformGrid>
-                        </StackPanel>
                         
                         <!-- Line Items Header -->
                         <Grid Margin="20,0,20,10">
@@ -291,6 +277,7 @@
                                                 <ColumnDefinition Width="2*" />
                                                 <ColumnDefinition Width="1*" />
                                                 <ColumnDefinition Width="1*" />
+                                                <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Grid.Column="0">
                                                 <TextBlock Text="{Binding Description}" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap"/>
@@ -298,6 +285,12 @@
                                             </StackPanel>
                                             <TextBlock Grid.Column="1" Text="{Binding Date, StringFormat=MMM dd}" FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
                                             <TextBlock Grid.Column="2" Text="{Binding Amount, StringFormat=${0:N2}}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                            
+                                            <Button Grid.Column="3" Command="{Binding DataContext.DownloadReceiptCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" 
+                                                    Visibility="{Binding IsPayment, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                    Style="{StaticResource MaterialDesignIconButton}" Width="30" Height="30" Margin="10,0,0,0" ToolTip="Download Receipt">
+                                                <materialDesign:PackIcon Kind="ReceiptTextOutline" Width="16" Height="16" Opacity="0.7"/>
+                                            </Button>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

@@ -586,16 +586,55 @@ namespace HRS.ViewModels
 
         #region Methods
 
+        protected override void ValidateProperty(string propertyName)
+        {
+            RemoveError(propertyName);
+
+            switch (propertyName)
+            {
+                case nameof(RoomNumber):
+                    if (string.IsNullOrWhiteSpace(RoomNumber))
+                        AddError(propertyName, "Room Number is required.");
+                    else if (DataStore.Data != null && DataStore.Data.Rooms != null && 
+                             DataStore.Data.Rooms.Any(r => r.RoomNumber == RoomNumber.Trim() && (CreatedRoom == null || r.Id != CreatedRoom.Id)))
+                        AddError(propertyName, "Room Number already exists.");
+                    break;
+
+                case nameof(FloorNumber):
+                    if (string.IsNullOrWhiteSpace(FloorNumber))
+                        AddError(propertyName, "Floor Number is required.");
+                    else if (!int.TryParse(FloorNumber, out _))
+                        AddError(propertyName, "Must be a number.");
+                    break;
+
+                case nameof(BasePrice):
+                    if (string.IsNullOrWhiteSpace(BasePrice))
+                        AddError(propertyName, "Price is required.");
+                    else if (!decimal.TryParse(BasePrice, out decimal p) || p <= 0)
+                        AddError(propertyName, "Must be a positive number.");
+                    break;
+
+                case nameof(MaxOccupancy):
+                    if (string.IsNullOrWhiteSpace(MaxOccupancy))
+                        AddError(propertyName, "Capacity is required.");
+                    else if (!int.TryParse(MaxOccupancy, out int m) || m <= 0)
+                        AddError(propertyName, "Must be at least 1.");
+                    break;
+
+                case nameof(SelectedRoomTypeName):
+                    if (string.IsNullOrWhiteSpace(SelectedRoomTypeName))
+                        AddError(propertyName, "Room Type is required.");
+                    else if (SelectedRoomTypeName == "Custom" && string.IsNullOrWhiteSpace(CustomRoomTypeName))
+                        AddError(propertyName, "Custom Name is required.");
+                    break;
+            }
+            
+            // Trigger command refresh - handled by CommandManager.RequerySuggested
+        }
+
         private bool CanCreateRoom()
         {
-            // Validate room type - if Custom is selected, CustomRoomTypeName must be provided
-            bool isValidRoomType = !string.IsNullOrWhiteSpace(SelectedRoomTypeName) && 
-                                   (SelectedRoomTypeName != "Custom" || !string.IsNullOrWhiteSpace(CustomRoomTypeName));
-
-            return !string.IsNullOrWhiteSpace(RoomNumber) &&
-                   !string.IsNullOrWhiteSpace(FloorNumber) &&
-                   !string.IsNullOrWhiteSpace(BasePrice) &&
-                   isValidRoomType;
+            return IsValid;
         }
 
         private async System.Threading.Tasks.Task CreateRoomAsync()

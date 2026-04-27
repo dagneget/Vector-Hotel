@@ -10,53 +10,53 @@ namespace HRS.Models
     {
         // Basic Information
         public string RoomName { get; set; }
-        public decimal RoomSize { get; set; } // in square meters
-        public string Description { get; set; }
+        // RoomSize is in base RoomModel
+        // Description is in base RoomModel
 
         // Capacity & Bed Configuration
-        public int MaxOccupancy { get; set; }
-        public int NumberOfBeds { get; set; }
-        public string BedType { get; set; } // Single, Twin, Queen, King
-        public bool HasExtraBed { get; set; }
+        // MaxOccupancy is in base RoomModel
+        // NumberOfBeds is in base RoomModel
+        // BedType is in base RoomModel
+        // HasExtraBed is in base RoomModel
 
         // Pricing
-        public decimal BasePricePerNight { get; set; }
-        public decimal ExtraBedPrice { get; set; }
-        public string Currency { get; set; } = "USD";
-        public decimal WeekendPrice { get; set; }
-        public decimal HolidayPrice { get; set; }
+        // BasePricePerNight is in base RoomModel
+        // ExtraBedPrice is in base RoomModel
+        // Currency is in base RoomModel
+        // WeekendPrice is in base RoomModel
+        // HolidayPrice is in base RoomModel
 
         // Amenities - stored as flags or comma-separated list
         public List<string> Amenities { get; set; } = new List<string>();
 
         // Status & Operations
-        public string AvailabilityStatus { get; set; } = "Available"; // Available, Occupied, Reserved, OutOfService
-        public string OperationalStatus { get; set; } = "Normal"; // Normal, MaintenanceRequired
+        // AvailabilityStatus is in base RoomModel
+        // OperationalStatus is in base RoomModel
 
         // Housekeeping
-        public DateTime? LastCleanedDate { get; set; }
-        public string HousekeepingNotes { get; set; }
+        // LastCleanedDate is in base RoomModel
+        // HousekeepingNotes is in base RoomModel
 
         // Maintenance
-        public string MaintenanceIssue { get; set; }
-        public DateTime? MaintenanceDate { get; set; }
+        // MaintenanceIssue is in base RoomModel
+        // MaintenanceDate is in base RoomModel
 
         // Additional Attributes
-        public bool SmokingAllowed { get; set; }
-        public bool WheelchairAccessible { get; set; }
-        public bool PetFriendly { get; set; }
+        // SmokingAllowed is in base RoomModel
+        // WheelchairAccessible is in base RoomModel
+        // PetFriendly is in base RoomModel
 
         // Media
-        public List<string> ImageUrls { get; set; } = new List<string>();
-        public string MainImageUrl { get; set; }
+        // ImageUrls is in base RoomModel
+        // MainImageUrl is in base RoomModel
 
         // Notes
-        public string StaffNotes { get; set; }
-        public string InternalComments { get; set; }
+        // StaffNotes is in base RoomModel
+        // InternalComments is in base RoomModel
 
         // Timestamps
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime? UpdatedAt { get; set; }
+        // CreatedAt is in base RoomModel
+        // UpdatedAt is in base RoomModel
     }
 
     /// <summary>
