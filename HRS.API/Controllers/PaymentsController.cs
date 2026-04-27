@@ -25,14 +25,21 @@ namespace HRS.API.Controllers
             var res = await _context.Reservations.FindAsync(payment.ReservationId);
             if (res != null)
             {
+                if (res.PaymentStatus == "Pending" && payment.Amount > 0)
+                {
+                    res.PaymentStatus = "Confirmed";
+                    res.LastModified = DateTime.Now;
+                }
+
                 var room = await _context.Rooms.FindAsync(res.RoomId);
                 if (room != null && res.RoomStatus == "CheckedIn")
                 {
                     bool isPaymentVerified = res.PaymentStatus == "Confirmed" || 
                                            await _context.Payments.AnyAsync(p => p.ReservationId == res.Id && p.VerifiedByUserId != null);
                     room.Status = isPaymentVerified ? "Occupied" : "Reserved";
-                    await _context.SaveChangesAsync();
                 }
+                
+                await _context.SaveChangesAsync();
             }
 
             return Ok(payment);

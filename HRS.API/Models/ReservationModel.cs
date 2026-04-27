@@ -23,5 +23,7 @@ namespace HRS.API.Models
         public DateTime LastModified { get; set; }
         public DateTime? CheckInTime { get; set; }
         public DateTime? CheckOutTime { get; set; }
+        public string PricingPlan { get; set; } = "Base";
+        public bool WantsExtraBed { get; set; }
     }
 }

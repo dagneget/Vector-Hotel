@@ -32,7 +32,27 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <materialDesign:Card Width="300" Height="40" UniformCornerRadius="8" Background="{DynamicResource SurfaceContainerLowestBrush}" Margin="0,0,15,0">
+                    <!-- Analytics Summary -->
+                    <materialDesign:Card Padding="15,8" Background="{DynamicResource SurfaceContainerLowestBrush}" UniformCornerRadius="10" Margin="0,0,20,0">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Margin="0,0,20,0">
+                                <TextBlock Text="COLLECTIONS" FontSize="9" FontWeight="Black" Opacity="0.6"/>
+                                <TextBlock Text="{Binding TotalCollected, StringFormat=${0:N2}}" FontSize="16" FontWeight="Bold"/>
+                            </StackPanel>
+                            <StackPanel VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                    <Border Width="8" Height="8" CornerRadius="2" Background="#114D1A" Margin="0,0,6,0"/>
+                                    <TextBlock Text="{Binding CashPercentage, StringFormat={}{0:N0}% Cash}" FontSize="10" FontWeight="SemiBold"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="8" Height="8" CornerRadius="2" Background="{DynamicResource NocturnalAccentBrush}" Margin="0,0,6,0"/>
+                                    <TextBlock Text="{Binding CardPercentage, StringFormat={}{0:N0}% Card}" FontSize="10" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <materialDesign:Card Width="250" Height="40" UniformCornerRadius="8" Background="{DynamicResource SurfaceContainerLowestBrush}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="40" />
@@ -111,10 +131,68 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-                            <DataGridTemplateColumn Header="BALANCE DUE" Width="150">
+                            <DataGridTemplateColumn Header="BILLING STATUS" Width="180">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding BalanceDue, StringFormat=${0:N2}}" FontWeight="Bold" FontSize="18" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" Margin="10,0" HorizontalAlignment="Right"/>
+                                        <StackPanel VerticalAlignment="Center" Margin="10,0">
+                                            <Border Padding="8,3" CornerRadius="4" HorizontalAlignment="Left" Margin="0,0,0,5">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Background" Value="#15FFFFFF"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding PaymentStatus}" Value="SETTLED">
+                                                                <Setter Property="Background" Value="#2000FF00"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding PaymentStatus}" Value="PARTIAL">
+                                                                <Setter Property="Background" Value="#20FFA500"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding PaymentStatus}" Value="UNPAID">
+                                                                <Setter Property="Background" Value="#20FF0000"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding PaymentStatus}" FontSize="10" FontWeight="Black">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding PaymentStatus}" Value="SETTLED">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource SuccessGreenBrush}"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding PaymentStatus}" Value="PARTIAL">
+                                                                    <Setter Property="Foreground" Value="#FFA500"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding PaymentStatus}" Value="UNPAID">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource DangerRedBrush}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                            <TextBlock Text="{Binding BalanceDue, StringFormat=${0:N2}}" FontWeight="Bold" FontSize="15" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="ACTIONS" Width="130">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Button Command="{Binding DataContext.ViewPaymentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource MaterialDesignRaisedButton}" Background="#2554C7" BorderThickness="0" Width="38" Height="38" Padding="0" Margin="0,0,10,0" materialDesign:ButtonAssist.CornerRadius="10">
+                                                <materialDesign:PackIcon Kind="Eye" Width="20" Height="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Button>
+                                            <Button Command="{Binding DataContext.EditPaymentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                Visibility="{Binding DataContext.CanProcessPayments, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}" Background="White" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1" Width="38" Height="38" Padding="0" materialDesign:ButtonAssist.CornerRadius="10">
+                                                <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18" Foreground="#111" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Button>
+                                        </StackPanel>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -127,7 +205,7 @@
         <!-- Right Slide-out Detail Panel: Folio View -->
         <Border Grid.Column="1" HorizontalAlignment="Right" Background="{DynamicResource CardBackgroundBrush}" 
                 CornerRadius="12" BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}"
-                Width="480" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                Width="480" Visibility="{Binding IsPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -149,6 +227,30 @@
                 <!-- Ledger / Line Items -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Margin="0,15,0,15">
+                        <!-- Currency Selection -->
+                        <Grid Margin="20,0,20,15">
+                            <TextBlock Text="FOLIO CURRENCY" FontSize="9" FontWeight="Black" Opacity="0.6" VerticalAlignment="Center"/>
+                            <ComboBox HorizontalAlignment="Right" Width="80" 
+                                      ItemsSource="{Binding CurrencyOptions}" 
+                                      SelectedItem="{Binding SelectedCurrency}"
+                                      Style="{StaticResource MaterialDesignComboBox}"
+                                      materialDesign:TextFieldAssist.DecorationVisibility="Collapsed" FontSize="12" FontWeight="Bold"/>
+                        </Grid>
+
+                        <!-- Quick Adjustments -->
+                        <StackPanel Margin="20,0,20,20" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock Text="QUICK ADJUSTMENTS" FontSize="9" FontWeight="Black" Opacity="0.6" Margin="0,0,0,10"/>
+                            <UniformGrid Columns="2">
+                                <Button Content="+ MINI-BAR" Command="{Binding AddChargeCommand}" CommandParameter="Mini-bar Charge" 
+                                        Style="{StaticResource MaterialDesignFlatButton}" FontSize="10" Height="30" Foreground="{DynamicResource NocturnalAccentBrush}"/>
+                                <Button Content="+ LAUNDRY" Command="{Binding AddChargeCommand}" CommandParameter="Laundry Service" 
+                                        Style="{StaticResource MaterialDesignFlatButton}" FontSize="10" Height="30" Foreground="{DynamicResource NocturnalAccentBrush}"/>
+                                <Button Content="- DISCOUNT" Command="{Binding AddDiscountCommand}" CommandParameter="Manager Adjustment" 
+                                        Style="{StaticResource MaterialDesignFlatButton}" FontSize="10" Height="30" Foreground="{DynamicResource SuccessGreenBrush}"/>
+                                <Button Content="+ DAMAGE" Command="{Binding AddChargeCommand}" CommandParameter="Damage Penalty" 
+                                        Style="{StaticResource MaterialDesignFlatButton}" FontSize="10" Height="30" Foreground="{DynamicResource DangerRedBrush}"/>
+                            </UniformGrid>
+                        </StackPanel>
                         
                         <!-- Line Items Header -->
                         <Grid Margin="20,0,20,10">
@@ -221,16 +323,20 @@
                             <Separator Background="{DynamicResource DividerBrush}" Margin="0,5"/>
                             <Grid Margin="0,5,0,0">
                                 <TextBlock Text="Balance Due" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                <TextBlock Text="{Binding FolioBalanceDue, StringFormat=${0:N2}}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource SuccessGreenBrush}" HorizontalAlignment="Right" />
+                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                    <TextBlock Text="{Binding SelectedCurrency}" FontSize="12" FontWeight="Bold" Opacity="0.5" VerticalAlignment="Bottom" Margin="0,0,5,3"/>
+                                    <TextBlock Text="{Binding ConvertedBalanceDue, StringFormat={}{0:N2}}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource SuccessGreenBrush}" />
+                                </StackPanel>
                             </Grid>
                         </StackPanel>
 
                         <!-- Actions -->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10" Visibility="{Binding IsAccountant, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,15" Visibility="{Binding CanProcessPayments, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <Button Content="VERIFY PAYMENT" Command="{Binding VerifyPaymentCommand}" 
+                                    Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}"
                                     Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="{DynamicResource NocturnalAccentBrush}" BorderBrush="{DynamicResource NocturnalAccentBrush}" Margin="0,0,10,0"/>
                             
-                            <Button Content="DOWNLOAD RECEIPT" Command="{Binding DownloadReceiptCommand}" 
+                            <Button Content="SEND VIA EMAIL" Command="{Binding SendEmailInvoiceCommand}"
                                     Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource DividerBrush}" Margin="0,0,10,0"/>
                                     
                             <Button Content="GENERATE INVOICE" Command="{Binding GenerateInvoiceCommand}"
@@ -239,16 +345,36 @@
                         </StackPanel>
                         
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Content="CANCEL" Command="{Binding CancelEditCommand}" 
+                            <!-- Custom Payment Input -->
+                            <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,20,0">
+                                <TextBlock Text="PARTIAL:" FontSize="9" FontWeight="Black" Opacity="0.6" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <materialDesign:Card Background="{DynamicResource AppBackgroundBrush}" UniformCornerRadius="4" Width="80" Height="32">
+                                    <TextBox Text="{Binding CustomPaymentAmount, UpdateSourceTrigger=PropertyChanged}" 
+                                             materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
+                                             BorderThickness="0" HorizontalContentAlignment="Center" VerticalAlignment="Center" FontSize="12" FontWeight="Bold"/>
+                                </materialDesign:Card>
+                                <Button Command="{Binding PayCustomCommand}" Style="{StaticResource MaterialDesignIconButton}" Width="32" Height="32" Margin="5,0,0,0">
+                                    <materialDesign:PackIcon Kind="Check" Width="16" Height="16" Foreground="{DynamicResource SuccessGreenBrush}"/>
+                                </Button>
+                            </StackPanel>
+
+                            <Button Content="PAYBACK" Command="{Binding EarlyCheckoutCommand}"
+                                    Visibility="{Binding CanProcessPayments, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="{DynamicResource DangerRedBrush}" BorderBrush="{DynamicResource DangerRedBrush}" 
+                                    Height="36" Margin="0,0,15,0" materialDesign:ButtonAssist.CornerRadius="6" ToolTip="Process early checkout and calculate payback/penalties" />
+
+                            <Button Content="CLOSE" Command="{Binding CancelEditCommand}" 
                                     Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,15,0"/>
                                     
-                            <Button Content="PAY BY CASH" Command="{Binding PayCashCommand}"
-                                    Style="{StaticResource MaterialDesignRaisedButton}" Background="#114D1A" Foreground="{DynamicResource SuccessGreenBrush}" FontWeight="Bold"
-                                    BorderThickness="0" Height="36" Margin="0,0,10,0" materialDesign:ButtonAssist.CornerRadius="6" />
+                            <StackPanel Orientation="Horizontal" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <Button Content="CASH" Command="{Binding PayCashCommand}"
+                                        Style="{StaticResource MaterialDesignRaisedButton}" Background="#114D1A" Foreground="{DynamicResource SuccessGreenBrush}" FontWeight="Bold"
+                                        BorderThickness="0" Height="36" Margin="0,0,10,0" materialDesign:ButtonAssist.CornerRadius="6" />
 
-                            <Button Content="PAY BY CARD" Command="{Binding PayCardCommand}"
-                                    Style="{StaticResource MaterialDesignRaisedButton}" Background="{DynamicResource NocturnalAccentBrush}" Foreground="#111111" FontWeight="Bold"
-                                    BorderThickness="0" Height="36" materialDesign:ButtonAssist.CornerRadius="6" />
+                                <Button Content="CARD" Command="{Binding PayCardCommand}"
+                                        Style="{StaticResource MaterialDesignRaisedButton}" Background="{DynamicResource NocturnalAccentBrush}" Foreground="#111111" FontWeight="Bold"
+                                        BorderThickness="0" Height="36" materialDesign:ButtonAssist.CornerRadius="6" />
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </Border>

@@ -54,6 +54,14 @@ namespace HRS.Services
                 var charges = await ApiService.GetAsync<List<ChargeModel>>("charges");
                 Data.Charges = new ObservableCollection<ChargeModel>(charges);
                 
+                try
+                {
+                    var auditLogs = await ApiService.GetAsync<List<AuditLogModel>>("auditlogs");
+                    if (auditLogs != null && auditLogs.Count > 0)
+                        Data.AuditLogs = new ObservableCollection<AuditLogModel>(auditLogs);
+                }
+                catch { /* Audit logs may not exist on backend yet */ }
+                
                 // Load settings (currencies and bed types)
                 try
                 {

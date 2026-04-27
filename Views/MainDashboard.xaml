@@ -37,6 +37,9 @@
         <DataTemplate DataType="{x:Type viewmodels:SettingsViewModel}">
             <local:SettingsView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:AuditLogsViewModel}">
+            <local:AuditLogsView />
+        </DataTemplate>
     </Window.Resources>
 
     <Grid>
@@ -169,14 +172,6 @@
 
                 <!-- Bottom Sections -->
                 <StackPanel VerticalAlignment="Bottom" Margin="10,0,10,30">
-                    <Border Background="#1E293B" CornerRadius="12" Padding="15" Margin="0,0,0,20">
-                        <StackPanel>
-                            <TextBlock Text="Need Help?" FontWeight="Bold" FontSize="13" Foreground="#3B82F6"/>
-                            <TextBlock Text="24/7 Support available" FontSize="11" Foreground="#9CA3AF" Margin="0,4,0,10"/>
-                            <Button Content="Contact Support" Style="{StaticResource MaterialDesignFlatButton}" Foreground="#3B82F6" FontSize="11" Height="30" Padding="0"/>
-                        </StackPanel>
-                    </Border>
-                    
                     <Button Command="{Binding NavigateSettingsCommand}" Visibility="{Binding CanViewSettings, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource LuminousSidebarButtonStyle}">
@@ -190,8 +185,26 @@
                             </Style>
                         </Button.Style>
                         <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Settings" Width="18" Height="18" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="System Settings" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    
+                    <Button Command="{Binding NavigateAuditLogsCommand}" Visibility="{Binding CanViewSettings, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource LuminousSidebarButtonStyle}">
+                                <Setter Property="Foreground" Value="#9CA3AF"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsAuditLogsActive}" Value="True">
+                                        <Setter Property="Background" Value="#2610B981"/>
+                                        <Setter Property="Foreground" Value="#10B981"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ShieldLock" Width="18" Height="18" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                            <TextBlock Text="Security &amp; Logs" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <TextBlock Text="Security Logs" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
@@ -288,7 +301,9 @@
                         </Button>
                         
                         <!-- Settings Cog -->
-                        <Button Command="{Binding NavigateSettingsCommand}" Style="{DynamicResource MaterialDesignIconButton}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="15,0">
+                        <Button Command="{Binding NavigateSettingsCommand}" 
+                                Visibility="{Binding CanViewSettings, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Style="{DynamicResource MaterialDesignIconButton}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="15,0">
                             <materialDesign:PackIcon Kind="Cog" Width="24" Height="24"/>
                         </Button>
 

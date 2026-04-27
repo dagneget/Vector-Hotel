@@ -49,6 +49,7 @@
                     </Border>
 
                     <Button Command="{Binding AddCustomerCommand}" 
+                            Visibility="{Binding CanManageCustomers, Converter={StaticResource BooleanToVisibilityConverter}}"
                             Background="{DynamicResource LuminousAccentBrush}" Foreground="White" FontWeight="Black"
                             BorderThickness="0" Height="45" Padding="25,0" materialDesign:ButtonAssist.CornerRadius="12">
                         <StackPanel Orientation="Horizontal">
@@ -130,6 +131,26 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="ACTIONS" Width="130">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Button Command="{Binding DataContext.ViewCustomerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource MaterialDesignRaisedButton}" Background="#2554C7" BorderThickness="0" Width="38" Height="38" Padding="0" Margin="0,0,10,0" materialDesign:ButtonAssist.CornerRadius="10">
+                                            <materialDesign:PackIcon Kind="Eye" Width="20" Height="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Button>
+                                        <Button Command="{Binding DataContext.EditCustomerCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Visibility="{Binding DataContext.CanManageCustomers, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}" Background="White" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1" Width="38" Height="38" Padding="0" materialDesign:ButtonAssist.CornerRadius="10">
+                                            <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18" Foreground="#111" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
@@ -138,7 +159,7 @@
         <!-- Right Column: Slide-out Detail Panel -->
         <Border Grid.Column="1" Width="480" Background="{DynamicResource SidebarBackgroundBrush}" 
                 CornerRadius="20" BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}"
-                Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                Visibility="{Binding IsPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="40" Color="Black" Opacity="0.1" ShadowDepth="0"/>
             </Border.Effect>
@@ -153,8 +174,30 @@
                 <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource DividerBrush}" Padding="30">
                     <Grid>
                         <StackPanel>
-                            <TextBlock Text="Guest Profile" FontSize="24" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBlock Text="IDENTITY AND PREFERENCE CONFIG" FontSize="10" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0" />
+                            <TextBlock FontSize="24" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="Guest Profile"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                <Setter Property="Text" Value="Edit Guest"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock FontSize="10" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="VIEW PROFILE INFORMATION"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                <Setter Property="Text" Value="IDENTITY AND PREFERENCE CONFIG"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </StackPanel>
                         <Button HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource MaterialDesignIconButton}" Command="{Binding CancelEditCommand}">
                             <materialDesign:PackIcon Kind="Close" Foreground="{DynamicResource TextSecondaryBrush}" />
@@ -162,8 +205,86 @@
                     </Grid>
                 </Border>
 
-                <!-- Scrollable Form Area -->
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <!-- View Mode ScrollViewer -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                              Visibility="{Binding IsViewingDetails, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <StackPanel Margin="30,25" DataContext="{Binding SelectedCustomer}">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <Border Width="60" Height="60" CornerRadius="15" Background="{DynamicResource AppBackgroundBrush}" Margin="0,0,20,0">
+                                <materialDesign:PackIcon Kind="AccountTie" Foreground="{DynamicResource LuminousAccentBrush}" Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding FullName}" FontWeight="Black" FontSize="20" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="{Binding CustomerType, StringFormat='Tier: {0}'}" FontSize="12" Foreground="{DynamicResource LuminousAccentBrush}" FontWeight="Bold" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <TextBlock Text="CONTACT INFORMATION" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,20,0,15" />
+                        
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Phone Number" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding Phone}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Email Address" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding Email}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="IDENTITY DETAILS" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,20,0,15" />
+
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{Binding IdType, StringFormat='{}ID Type: {0}'}" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding IdNumber}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Nationality" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding Nationality}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                        
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Address" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{Binding Address}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <TextBlock Text="PREFERENCES" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,20,0,15" />
+
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Preferred Room" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding PreferredRoomType}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Bed Type" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding BedTypePreference}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Notes" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{Binding Notes}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Scrollable Form Area (Edit Mode) -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                              Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Margin="30,25" DataContext="{Binding EditingContext}">
                         
                         <TextBlock Text="PERSONAL INFORMATION" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,20" />
@@ -188,10 +309,26 @@
                                 <ComboBoxItem Content="Male" />
                                 <ComboBoxItem Content="Female" />
                                 <ComboBoxItem Content="Other" />
+                                <ComboBoxItem Content="Prefer not to say" />
                             </ComboBox>
                             <TextBox Grid.Column="2" Text="{Binding Nationality}" materialDesign:HintAssist.Hint="Nationality" 
                                      Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" VerticalContentAlignment="Center"/>
                         </Grid>
+
+                        <Grid Margin="0,0,0,25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <DatePicker Grid.Column="0" SelectedDate="{Binding DateOfBirth}" materialDesign:HintAssist.Hint="Date of Birth" 
+                                        Style="{StaticResource MaterialDesignOutlinedDatePicker}" Height="55"/>
+                            <TextBox Grid.Column="2" Text="{Binding Occupation}" materialDesign:HintAssist.Hint="Occupation" 
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" VerticalContentAlignment="Center"/>
+                        </Grid>
+
+                        <TextBox Text="{Binding Company}" materialDesign:HintAssist.Hint="Company / Organization" 
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,0,0,25" Height="55" VerticalContentAlignment="Center"/>
 
                         <TextBlock Text="IDENTIFICATION DETAILS" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,10,0,20" />
 
@@ -206,15 +343,101 @@
                                 <ComboBoxItem Content="Passport" />
                                 <ComboBoxItem Content="National ID" />
                                 <ComboBoxItem Content="Driver's License" />
+                                <ComboBoxItem Content="Other" />
                             </ComboBox>
                             <TextBox Grid.Column="2" Text="{Binding IdNumber}" materialDesign:HintAssist.Hint="ID Document #" 
                                      Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" VerticalContentAlignment="Center"/>
                         </Grid>
+
+                        <Grid Margin="0,0,0,25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <DatePicker Grid.Column="0" SelectedDate="{Binding IdExpiryDate}" materialDesign:HintAssist.Hint="ID Expiry Date" 
+                                        Style="{StaticResource MaterialDesignOutlinedDatePicker}" Height="55"/>
+                            <TextBox Grid.Column="2" Text="{Binding PassportNumber}" materialDesign:HintAssist.Hint="Passport Number (Legacy)" 
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" VerticalContentAlignment="Center"/>
+                        </Grid>
                                  
                         <TextBox Text="{Binding Address}" materialDesign:HintAssist.Hint="Physical Address" 
-                                 Style="{StaticResource MaterialDesignOutlinedTextBox}" TextWrapping="Wrap" AcceptsReturn="True" Height="80" Margin="0,0,0,30"/>
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}" TextWrapping="Wrap" AcceptsReturn="True" Height="80" Margin="0,0,0,25"/>
 
-                        <TextBlock Text="SYSTEM ATTRIBUTES" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,10,0,20" />
+                        <TextBlock Text="EMERGENCY CONTACTS" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,10,0,20" />
+
+                        <Grid Margin="0,0,0,25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Text="{Binding EmergencyContactName}" materialDesign:HintAssist.Hint="Contact Name" 
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" VerticalContentAlignment="Center"/>
+                            <TextBox Grid.Column="2" Text="{Binding EmergencyContactPhone}" materialDesign:HintAssist.Hint="Contact Phone" 
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" VerticalContentAlignment="Center"/>
+                        </Grid>
+
+                        <TextBlock Text="PREFERENCES" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,10,0,20" />
+
+                        <Grid Margin="0,0,0,25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Text="{Binding PreferredRoomType}" materialDesign:HintAssist.Hint="Preferred Room Type" 
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" VerticalContentAlignment="Center"/>
+                            <ComboBox Grid.Column="2" Text="{Binding SmokingPreference}" materialDesign:HintAssist.Hint="Smoking Preference" 
+                                      Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55">
+                                <ComboBoxItem Content="Non-Smoking" />
+                                <ComboBoxItem Content="Smoking" />
+                                <ComboBoxItem Content="No Preference" />
+                            </ComboBox>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" Text="{Binding FloorPreference}" materialDesign:HintAssist.Hint="Floor Preference" 
+                                      Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55">
+                                <ComboBoxItem Content="Low Floor" />
+                                <ComboBoxItem Content="Mid Floor" />
+                                <ComboBoxItem Content="High Floor" />
+                                <ComboBoxItem Content="No Preference" />
+                            </ComboBox>
+                            <ComboBox Grid.Column="2" Text="{Binding BedTypePreference}" materialDesign:HintAssist.Hint="Bed Preference" 
+                                      Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55">
+                                <ComboBoxItem Content="Single" />
+                                <ComboBoxItem Content="Double" />
+                                <ComboBoxItem Content="Twin" />
+                                <ComboBoxItem Content="King" />
+                                <ComboBoxItem Content="Queen" />
+                                <ComboBoxItem Content="No Preference" />
+                            </ComboBox>
+                        </Grid>
+
+                        <TextBlock Text="LOYALTY &amp; SYSTEM" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,10,0,20" />
+
+                        <Grid Margin="0,0,0,25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" Text="{Binding LoyaltyTier}" materialDesign:HintAssist.Hint="Loyalty Tier" 
+                                      Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55">
+                                <ComboBoxItem Content="None" />
+                                <ComboBoxItem Content="Silver" />
+                                <ComboBoxItem Content="Gold" />
+                                <ComboBoxItem Content="Platinum" />
+                            </ComboBox>
+                            <TextBox Grid.Column="2" Text="{Binding LoyaltyPoints}" materialDesign:HintAssist.Hint="Loyalty Points" 
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" VerticalContentAlignment="Center"/>
+                        </Grid>
 
                         <Grid Margin="0,0,0,25">
                             <Grid.ColumnDefinitions>
@@ -235,6 +458,22 @@
                             </ComboBox>
                         </Grid>
 
+                        <TextBlock Text="BLACKLIST SETTINGS" FontWeight="Black" FontSize="11" Foreground="{DynamicResource DangerRedBrush}" Margin="0,10,0,20" />
+
+                        <Grid Margin="0,0,0,25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Grid.Column="0" IsChecked="{Binding IsBlacklisted}" Content="Blacklist Guest" 
+                                      VerticalAlignment="Center" FontWeight="Bold" Foreground="{DynamicResource DangerRedBrush}"/>
+                            <TextBox Grid.Column="2" Text="{Binding BlacklistReason}" materialDesign:HintAssist.Hint="Reason for Blacklisting" 
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" VerticalContentAlignment="Center"/>
+                        </Grid>
+
+                        <TextBlock Text="REMARKS" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,10,0,20" />
+
                         <TextBox Text="{Binding Notes}" materialDesign:HintAssist.Hint="Guest Preferences / Remarks" 
                                  Style="{StaticResource MaterialDesignOutlinedTextBox}" TextWrapping="Wrap" AcceptsReturn="True" Height="100" Margin="0,0,0,10"/>
                     </StackPanel>
@@ -244,6 +483,7 @@
                 <Border Grid.Row="2" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource DividerBrush}" Padding="30">
                     <Grid>
                         <Button Content="DELETE PROFILE" Command="{Binding DataContext.DeleteCustomerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                Visibility="{Binding DataContext.CanManageCustomers, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}"
                                 Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource DangerRedBrush}" FontWeight="Black" HorizontalAlignment="Left" Padding="0"/>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -251,6 +491,7 @@
                                     Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="{DynamicResource DividerBrush}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,12,0" Height="45" Padding="25,0" materialDesign:ButtonAssist.CornerRadius="12"/>
                                     
                             <Button Content="SAVE PROFILE" Command="{Binding DataContext.SaveCustomerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                    Visibility="{Binding DataContext.CanManageCustomers, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToVisibilityConverter}}"
                                     Style="{StaticResource MaterialDesignFlatButton}" Background="{DynamicResource LuminousAccentBrush}" Foreground="White" FontWeight="Black" Height="45" Padding="30,0" materialDesign:ButtonAssist.CornerRadius="12" />
                         </StackPanel>
                     </Grid>

@@ -20,8 +20,10 @@ namespace HRS.Models
         public string Source { get; set; } // Walk-In, Phone, Web
         public string Notes { get; set; }
         public string BillingType { get; set; } // Individual, Group
-        public DateTime LastModified { get; set; }
+        public DateTime? LastModified { get; set; }
         public DateTime? CheckInTime { get; set; }
         public DateTime? CheckOutTime { get; set; }
+        public string PricingPlan { get; set; } = "Base";
+        public bool WantsExtraBed { get; set; }
     }
 }

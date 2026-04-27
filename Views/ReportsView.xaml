@@ -13,12 +13,14 @@
 
     <Grid Margin="30,25">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" /> <!-- Header -->
+            <RowDefinition Height="Auto" /> <!-- KPIs -->
+            <RowDefinition Height="Auto" /> <!-- Charts & Insights -->
+            <RowDefinition Height="Auto" /> <!-- Filters -->
+            <RowDefinition Height="*" />    <!-- Table -->
         </Grid.RowDefinitions>
 
-        <!-- Header Area -->
+        <!-- 1. Header Area -->
         <Grid Grid.Row="0" Margin="0,0,0,30">
             <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="Financial Intelligence" FontSize="32" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" />
@@ -26,159 +28,249 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <Border Background="{DynamicResource SidebarBackgroundBrush}" CornerRadius="12" Height="45" Margin="0,0,15,0" BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}">
-                    <Grid Width="300">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="45" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <materialDesign:PackIcon Kind="Magnify" Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.6"/>
-                        <TextBox Grid.Column="1" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
-                                 materialDesign:TextFieldAssist.DecorationVisibility="Collapsed" 
-                                 materialDesign:HintAssist.Hint="Search records by ID or guest..."
-                                 BorderThickness="0" 
-                                 VerticalAlignment="Center" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14">
-                        </TextBox>
-                    </Grid>
-                </Border>
-
-                <Button Style="{StaticResource MaterialDesignFlatButton}" Background="{DynamicResource LuminousAccentBrush}" Foreground="White" FontWeight="Black" Height="45" Padding="25,0" materialDesign:ButtonAssist.CornerRadius="12">
+                <Button Command="{Binding GenerateReportCommand}" Style="{StaticResource MaterialDesignFlatButton}" Background="{DynamicResource LuminousAccentBrush}" Foreground="Black" FontWeight="Black" Height="45" Padding="25,0" materialDesign:ButtonAssist.CornerRadius="12">
                     <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="FileExport" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="EXPORT DATA" VerticalAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="FilePdfBox" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="GENERATE STATEMENT" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
         </Grid>
 
-        <!-- Summary Cards -->
-        <Grid Grid.Row="1" Margin="0,0,0,30">
+        <!-- 2. KPI Dashboard -->
+        <Grid Grid.Row="1" Margin="0,0,0,25">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="15" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="15" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="15" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- Total Revenue Card -->
+            <!-- Gross Revenue -->
             <Border Grid.Column="0" Style="{StaticResource LuminousCardStyle}">
                 <StackPanel>
-                    <TextBlock Text="GROSS REVENUE" FontSize="11" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" />
-                    <Grid Margin="0,12,0,0">
-                        <TextBlock Text="{Binding TotalRevenue}" FontSize="34" FontWeight="Black" Foreground="{DynamicResource SuccessGreenBrush}" />
-                        <materialDesign:PackIcon Kind="ChartLine" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="{DynamicResource SuccessGreenBrush}" Opacity="0.15" Width="40" Height="40" Margin="0,0,0,5"/>
-                    </Grid>
+                    <TextBlock Text="GROSS REVENUE" FontSize="10" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.8" />
+                    <TextBlock Text="{Binding TotalRevenue}" FontSize="28" FontWeight="Black" Foreground="{DynamicResource SuccessGreenBrush}" Margin="0,8,0,0"/>
                 </StackPanel>
             </Border>
 
-            <!-- Transaction Count Card -->
+            <!-- ADR -->
             <Border Grid.Column="2" Style="{StaticResource LuminousCardStyle}">
                 <StackPanel>
-                    <TextBlock Text="TRANSACTION VOLUME" FontSize="11" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" />
-                    <Grid Margin="0,12,0,0">
-                        <TextBlock Text="{Binding TransactionCount}" FontSize="34" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" />
-                        <materialDesign:PackIcon Kind="History" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="{DynamicResource LuminousAccentBrush}" Opacity="0.15" Width="40" Height="40" Margin="0,0,0,5"/>
-                    </Grid>
+                    <TextBlock Text="ADR (AVG DAILY RATE)" FontSize="10" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.8" />
+                    <TextBlock Text="{Binding Adr}" FontSize="28" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,8,0,0"/>
                 </StackPanel>
             </Border>
 
-            <!-- System Info Card -->
-            <Border Grid.Column="4" CornerRadius="15" Padding="25" BorderThickness="1" BorderBrush="{DynamicResource LuminousAccentBrush}">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#F0F7FF" Offset="0" />
-                        <GradientStop Color="#FFFFFF" Offset="1" />
-                    </LinearGradientBrush>
-                </Border.Background>
+            <!-- RevPAR -->
+            <Border Grid.Column="4" Style="{StaticResource LuminousCardStyle}">
                 <StackPanel>
-                    <TextBlock Text="FISCAL PERIOD" FontSize="11" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" />
-                    <TextBlock Text="FY 2026/27" FontSize="30" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,10,0,0"/>
-                    <TextBlock Text="Q1 PERFORMANCE: EXCELENT" FontSize="10" Foreground="{DynamicResource SuccessGreenBrush}" FontWeight="Black" Margin="0,5,0,0"/>
+                    <TextBlock Text="REVPAR" FontSize="10" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.8" />
+                    <TextBlock Text="{Binding RevPar}" FontSize="28" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,8,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Occupancy -->
+            <Border Grid.Column="6" Style="{StaticResource LuminousCardStyle}" BorderBrush="{DynamicResource LuminousAccentBrush}" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="OCCUPANCY RATE" FontSize="10" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" />
+                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                        <TextBlock Text="{Binding OccupancyRate, StringFormat={}{0:P0}}" FontSize="28" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        <materialDesign:PackIcon Kind="TrendingUp" Width="18" Height="18" Foreground="{DynamicResource SuccessGreenBrush}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </Grid>
 
-        <!-- Transaction Data Table -->
-        <Border Grid.Row="2" Style="{StaticResource LuminousCardStyle}" Padding="0">
-            <DataGrid ItemsSource="{Binding ReportData}"
-                      AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column"
-                      SelectionMode="Single" SelectionUnit="FullRow"
-                      BorderThickness="0" Background="Transparent" Margin="20" RowHeight="75">
+        <!-- 3. Charts & Insights Row -->
+        <Grid Grid.Row="2" Margin="0,0,0,30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-                <DataGrid.ColumnHeaderStyle>
-                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
-                        <Setter Property="FontSize" Value="11"/>
-                        <Setter Property="FontWeight" Value="Black"/>
-                        <Setter Property="Padding" Value="10,0,10,15"/>
-                    </Style>
-                </DataGrid.ColumnHeaderStyle>
-
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="RECORD ID" Width="180">
-                        <DataGridTemplateColumn.CellTemplate>
+            <!-- Revenue Growth Chart -->
+            <Border Grid.Column="0" Style="{StaticResource LuminousCardStyle}" Height="280">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Grid.Row="0" Text="REVENUE TREND (LAST 7 DAYS)" FontSize="11" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,20"/>
+                    
+                    <ItemsControl Grid.Row="1" ItemsSource="{Binding RevenueChartData}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="7" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="10" Padding="15,8" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding PaymentId}" FontWeight="Black" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}" />
-                                </Border>
+                                <Grid VerticalAlignment="Bottom" Margin="10,0">
+                                    <Border Background="{DynamicResource LuminousAccentBrush}" Opacity="0.1" CornerRadius="6,6,0,0" />
+                                    <Border Background="{DynamicResource LuminousAccentBrush}" Height="{Binding Percentage}" VerticalAlignment="Bottom" CornerRadius="6,6,0,0" ToolTip="{Binding Value, StringFormat=C2}" />
+                                </Grid>
                             </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
-                    <DataGridTemplateColumn Header="BENEFICIARY" Width="*">
-                        <DataGridTemplateColumn.CellTemplate>
+                    <ItemsControl Grid.Row="2" ItemsSource="{Binding RevenueChartData}" Margin="0,10,0,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="7" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Border Width="45" Height="45" CornerRadius="12" Background="{DynamicResource AppBackgroundBrush}" Margin="0,0,15,0">
-                                        <materialDesign:PackIcon Kind="AccountTie" Foreground="{DynamicResource LuminousAccentBrush}" Width="22" Height="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding GuestName}" FontWeight="Black" FontSize="15" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                        <TextBlock Text="VERIFIED TRANSACTION" FontSize="10" Foreground="{DynamicResource SuccessGreenBrush}" FontWeight="Black" Margin="0,3,0,0"/>
-                                    </StackPanel>
+                                <TextBlock Text="{Binding Label}" FontSize="10" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
+
+            <!-- Room Popularity -->
+            <Border Grid.Column="2" Style="{StaticResource LuminousCardStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="REVENUE BY CATEGORY" FontSize="11" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,20"/>
+                    <ItemsControl Grid.Row="1" ItemsSource="{Binding RoomPopularityData}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,0,0,15">
+                                    <Grid>
+                                        <TextBlock Text="{Binding Label}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        <TextBlock Text="{Binding Value, StringFormat=C0}" FontSize="12" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                    <ProgressBar Value="{Binding Value}" Maximum="100000" Height="4" Margin="0,8,0,0" Foreground="{DynamicResource LuminousAccentBrush}" Background="{DynamicResource AppBackgroundBrush}" BorderThickness="0"/>
                                 </StackPanel>
                             </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
 
-                    <DataGridTemplateColumn Header="EXECUTION DATE" Width="200">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding Date, StringFormat=MMM dd\, yyyy}" FontWeight="Black" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                    <TextBlock Text="Time: 09:45 AM" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" FontWeight="Bold" Margin="0,3,0,0"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+            <!-- Tax & Forecast -->
+            <StackPanel Grid.Column="4">
+                <Border Style="{StaticResource LuminousCardStyle}" Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="TAX LIABILITY (10%)" FontSize="11" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,12"/>
+                        <TextBlock Text="{Binding TaxAmount}" FontSize="24" FontWeight="Black" Foreground="{DynamicResource DangerRedBrush}"/>
+                        <TextBlock Text="NET INCOME" FontSize="10" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,15,0,5"/>
+                        <TextBlock Text="{Binding NetIncome}" FontSize="20" FontWeight="Black" Foreground="{DynamicResource SuccessGreenBrush}"/>
+                    </StackPanel>
+                </Border>
+                <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="15" Padding="20">
+                    <StackPanel>
+                        <TextBlock Text="FUTURE BOOKINGS" FontSize="11" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,8"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding FutureBookingsCount}" FontSize="32" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="RESERVATIONS" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Bottom" Margin="10,0,0,6"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
 
-                    <DataGridTemplateColumn Header="GATEWAY" Width="150">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1" CornerRadius="10" Padding="15,6" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                    <StackPanel Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="CreditCardOutline" Width="14" Height="14" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding Method}" FontSize="11" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" />
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+        <!-- 4. Filters & Search -->
+        <Grid Grid.Row="3" Margin="0,0,0,20">
+            <StackPanel Orientation="Horizontal">
+                <RadioButton Content="All Time" IsChecked="True" Command="{Binding FilterCommand}" CommandParameter="All" Style="{StaticResource MaterialDesignTabRadioButton}" Margin="0,0,10,0"/>
+                <RadioButton Content="Today" Command="{Binding FilterCommand}" CommandParameter="Today" Style="{StaticResource MaterialDesignTabRadioButton}" Margin="0,0,10,0"/>
+                <RadioButton Content="This Week" Command="{Binding FilterCommand}" CommandParameter="Week" Style="{StaticResource MaterialDesignTabRadioButton}" Margin="0,0,10,0"/>
+                <RadioButton Content="This Month" Command="{Binding FilterCommand}" CommandParameter="Month" Style="{StaticResource MaterialDesignTabRadioButton}" Margin="0,0,10,0"/>
+                <RadioButton Content="YTD" Command="{Binding FilterCommand}" CommandParameter="YTD" Style="{StaticResource MaterialDesignTabRadioButton}"/>
+            </StackPanel>
 
-                    <DataGridTemplateColumn Header="EQUIVALENT AMOUNT" Width="180">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,20,0">
-                                    <TextBlock Text="{Binding Amount, StringFormat=${0:N2}}" FontWeight="Black" FontSize="18" Foreground="{DynamicResource SuccessGreenBrush}"/>
-                                    <TextBlock Text="SUCCESSFUL" FontSize="10" Foreground="{DynamicResource SuccessGreenBrush}" FontWeight="Black" HorizontalAlignment="Right" Margin="0,3,0,0"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+            <Border HorizontalAlignment="Right" Background="{DynamicResource SidebarBackgroundBrush}" CornerRadius="10" Height="40" BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}">
+                <Grid Width="250">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <materialDesign:PackIcon Kind="Magnify" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}" Opacity="0.6"/>
+                    <TextBox Grid.Column="1" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                             materialDesign:TextFieldAssist.DecorationVisibility="Collapsed" 
+                             materialDesign:HintAssist.Hint="Search ID or guest..."
+                             BorderThickness="0" VerticalAlignment="Center" Background="Transparent" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13">
+                    </TextBox>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 5. Data Table -->
+        <Border Grid.Row="4" Style="{StaticResource LuminousCardStyle}" Padding="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="300" />
+                </Grid.ColumnDefinitions>
+
+                <DataGrid ItemsSource="{Binding ReportData}" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column"
+                          BorderThickness="0" Background="Transparent" Margin="15" RowHeight="60">
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            <Setter Property="FontSize" Value="10"/>
+                            <Setter Property="FontWeight" Value="Black"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="DATE" Binding="{Binding Date, StringFormat=MMM dd}" Width="80"/>
+                        <DataGridTemplateColumn Header="GUEST" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding GuestName}" FontWeight="Bold" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="METHOD" Binding="{Binding Method}" Width="100"/>
+                        <DataGridTemplateColumn Header="AMOUNT" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Amount, StringFormat=C2}" FontWeight="Black" Foreground="{DynamicResource SuccessGreenBrush}" HorizontalAlignment="Right"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Top Guests Sidebar -->
+                <Border Grid.Column="1" Background="{DynamicResource AppBackgroundBrush}" Margin="0,15,15,15" CornerRadius="12" Padding="15">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="TOP GUESTS (VALUE)" FontSize="10" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,15"/>
+                        <ItemsControl Grid.Row="1" ItemsSource="{Binding TopGuests}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,12">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="12" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <TextBlock Text="{Binding VisitCount, StringFormat={}{0} visits}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding TotalSpent, StringFormat=C0}" FontWeight="Black" FontSize="12" Foreground="{DynamicResource SuccessGreenBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Border>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

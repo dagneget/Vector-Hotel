@@ -49,6 +49,7 @@
                     </Border>
 
                     <Button Command="{Binding RegisterRoomCommand}" 
+                            Visibility="{Binding CanManageRooms, Converter={StaticResource BooleanToVisibilityConverter}}"
                             Background="{DynamicResource LuminousAccentBrush}" Foreground="White" FontWeight="Black"
                             BorderThickness="0" Height="45" Padding="25,0" materialDesign:ButtonAssist.CornerRadius="12">
                         <StackPanel Orientation="Horizontal">
@@ -129,7 +130,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
-                                        <Border Width="10" Height="10" CornerRadius="4" Margin="0,0,12,0">
+                                        <Border Width="8" Height="8" CornerRadius="4" Margin="0,0,10,0" VerticalAlignment="Center">
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <Setter Property="Background" Value="{DynamicResource SuccessGreenBrush}" />
@@ -144,20 +145,21 @@
                                                 </Style>
                                             </Border.Style>
                                         </Border>
-                                        <TextBlock Text="{Binding CleanStatus}" FontWeight="Black" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding CleanStatus}" Value="Dirty">
-                                                            <Setter Property="Foreground" Value="{DynamicResource DangerRedBrush}" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding CleanStatus}" Value="Maintenance">
-                                                            <Setter Property="Foreground" Value="#F59E0B" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
+                                        
+                                         <ComboBox ItemsSource="{Binding DataContext.CleanStatusOptions, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                   IsEnabled="{Binding DataContext.CanManageRooms, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                   SelectedItem="{Binding CleanStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  Style="{StaticResource MaterialDesignComboBox}"
+                                                  BorderThickness="0" FontWeight="Black" FontSize="13" 
+                                                  Foreground="{DynamicResource TextPrimaryBrush}"
+                                                  materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
+                                                  Width="110" VerticalAlignment="Center">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding}" FontWeight="Bold" />
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -187,6 +189,7 @@
                                             <materialDesign:PackIcon Kind="Eye" Width="16" Height="16"/>
                                         </Button>
                                         <Button Command="{Binding DataContext.EditRoomCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                Visibility="{Binding DataContext.CanManageRooms, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource BooleanToVisibilityConverter}}"
                                                 CommandParameter="{Binding}"
                                                 Style="{StaticResource MaterialDesignOutlinedButton}"
                                                 Height="35" Padding="12,0"
@@ -462,7 +465,20 @@
                                                     </Style>
                                                 </Border.Style>
                                             </Border>
-                                            <TextBlock Text="{Binding SelectedRoom.CleanStatus}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <ComboBox ItemsSource="{Binding DataContext.CleanStatusOptions, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                               IsEnabled="{Binding CanManageRooms}"
+                                               SelectedItem="{Binding SelectedRoom.CleanStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                      Style="{StaticResource MaterialDesignComboBox}"
+                                                      BorderThickness="0" FontWeight="Bold" FontSize="12" 
+                                                      Foreground="{DynamicResource TextPrimaryBrush}"
+                                                      materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
+                                                      Width="100" VerticalAlignment="Center">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding}" FontWeight="Bold" />
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
                                         </StackPanel>
                                     </StackPanel>
                                 </Border>
@@ -581,7 +597,9 @@
                     
                     <!-- View Mode Actions -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding IsEditing, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <Button Content="EDIT ROOM" Command="{Binding StartEditCommand}" Style="{StaticResource MaterialDesignFlatButton}" Background="{DynamicResource LuminousAccentBrush}" Foreground="White" FontWeight="Black" Height="45" Padding="30,0" materialDesign:ButtonAssist.CornerRadius="12" />
+                        <Button Content="EDIT ROOM" Command="{Binding StartEditCommand}" 
+                                Visibility="{Binding CanManageRooms, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Style="{StaticResource MaterialDesignFlatButton}" Background="{DynamicResource LuminousAccentBrush}" Foreground="White" FontWeight="Black" Height="45" Padding="30,0" materialDesign:ButtonAssist.CornerRadius="12" />
                     </StackPanel>
                     
                     <!-- Edit Mode Buttons -->

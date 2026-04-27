@@ -42,6 +42,7 @@ namespace HRS
             resources["TextSecondaryBrush"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6B7280"));
             resources["DividerBrush"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E5E7EB"));
             resources["BadgeBackgroundBrush"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F3F4F6"));
+            resources["LuminousAccentBrush"] = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1D4ED8"));
         }
     }
 }

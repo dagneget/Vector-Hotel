@@ -46,6 +46,8 @@ namespace HRS.API.Services
 
                 var room = await _roomRepo.GetByIdAsync(res.RoomId);
                 decimal pricePerNight = room != null ? room.BasePricePerNight : (res.TotalPrice / Math.Max(1, (int)(res.CheckOut.Date - res.CheckIn.Date).TotalDays));
+                if (room != null && res.PricingPlan == "Weekend") pricePerNight = room.WeekendPrice;
+                else if (room != null && res.PricingPlan == "Holiday") pricePerNight = room.HolidayPrice;
 
                 if (hoursUntilCheckIn < 48)
                 {
@@ -99,6 +101,8 @@ namespace HRS.API.Services
 
                 var room = await _roomRepo.GetByIdAsync(res.RoomId);
                 decimal pricePerNight = room != null ? room.BasePricePerNight : (res.TotalPrice / Math.Max(1, (int)(res.CheckOut.Date - res.CheckIn.Date).TotalDays));
+                if (room != null && res.PricingPlan == "Weekend") pricePerNight = room.WeekendPrice;
+                else if (room != null && res.PricingPlan == "Holiday") pricePerNight = room.HolidayPrice;
 
                 int daysStayed = (int)(DateTime.Today - res.CheckIn.Date).TotalDays;
                 if (daysStayed < 1) daysStayed = 1;

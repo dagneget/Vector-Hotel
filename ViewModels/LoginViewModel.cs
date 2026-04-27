@@ -62,6 +62,7 @@ namespace HRS.ViewModels
                 else
                 {
                     ErrorMessage = "Invalid username or password.";
+                    AuditService.Log("Failed Login", $"Failed login attempt for user '{Username}'.", "Access", "Warning");
                 }
             }
             catch (Exception ex)

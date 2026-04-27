@@ -52,6 +52,7 @@ namespace HRS.Services
             try 
             {
                 await ApiService.PutAsync($"reservations/{res.Id}/status", newStatus);
+                AuditService.Log("Reservation State Change", $"Reservation {res.Id} transitioned to {newStatus}.", "Modification", "Info");
                 await DataStore.LoadAsync(); // Refresh local cache to see room status changes
                 return true;
             }

@@ -77,6 +77,7 @@ namespace HRS.Services
                 UpdateBrushColor(resources, "TextSecondaryBrush", "#94A3B8");
                 UpdateBrushColor(resources, "DividerBrush", "#334155");
                 UpdateBrushColor(resources, "BadgeBackgroundBrush", "#1E293B");
+                UpdateBrushColor(resources, "LuminousAccentBrush", "#3B82F6"); // Brighter Blue for Dark Mode
             }
             else
             {
@@ -89,6 +90,7 @@ namespace HRS.Services
                 UpdateBrushColor(resources, "TextSecondaryBrush", "#6B7280");
                 UpdateBrushColor(resources, "DividerBrush", "#E5E7EB");
                 UpdateBrushColor(resources, "BadgeBackgroundBrush", "#F3F4F6");
+                UpdateBrushColor(resources, "LuminousAccentBrush", "#1D4ED8"); // Deep Blue for Light Mode
             }
         }
 

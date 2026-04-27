@@ -41,6 +41,7 @@
                     </Border>
                     
                     <Button Command="{Binding NewReservationCommand}" 
+                            Visibility="{Binding CanManageReservations, Converter={StaticResource BooleanToVisibilityConverter}}"
                             Background="{DynamicResource LuminousAccentBrush}" Foreground="White" FontWeight="Black"
                             BorderThickness="0" Height="45" Padding="25,0" materialDesign:ButtonAssist.CornerRadius="12">
                         <StackPanel Orientation="Horizontal">
@@ -201,7 +202,24 @@
                                     <DataTemplate>
                                         <Grid HorizontalAlignment="Left">
                                             <Border Background="{Binding ReservationStatus, Converter={StaticResource StatusToColorBrushConverter}}" Opacity="0.12" CornerRadius="10" />
-                                            <TextBlock Text="{Binding ReservationStatus}" FontSize="11" FontWeight="Black" Foreground="{Binding ReservationStatus, Converter={StaticResource StatusToColorBrushConverter}}" Padding="15,8" />
+                                            <ComboBox ItemsSource="{Binding DataContext.RoomStatusOptions, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                      SelectedItem="{Binding ReservationStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                      FontSize="11" FontWeight="Black" 
+                                                      Foreground="{Binding ReservationStatus, Converter={StaticResource StatusToColorBrushConverter}}"
+                                                      Padding="15,4"
+                                                      BorderThickness="0"
+                                                      Background="Transparent"
+                                                      materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
+                                                      IsEnabled="{Binding DataContext.CanManageReservations, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                      VerticalAlignment="Center">
+                                                <ComboBox.Resources>
+                                                    <Style TargetType="ComboBoxItem" BasedOn="{StaticResource MaterialDesignComboBoxItemStyle}">
+                                                        <Setter Property="Padding" Value="10,5"/>
+                                                        <Setter Property="FontSize" Value="11"/>
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                    </Style>
+                                                </ComboBox.Resources>
+                                            </ComboBox>
                                         </Grid>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
@@ -217,6 +235,26 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+
+                            <DataGridTemplateColumn Header="ACTIONS" Width="130">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Button Command="{Binding DataContext.ViewReservationCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Style="{StaticResource MaterialDesignRaisedButton}" Background="#2554C7" BorderThickness="0" Width="38" Height="38" Padding="0" Margin="0,0,10,0" materialDesign:ButtonAssist.CornerRadius="10">
+                                                <materialDesign:PackIcon Kind="Eye" Width="20" Height="20" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Button>
+                                            <Button Command="{Binding DataContext.EditReservationCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"
+                                                Visibility="{Binding DataContext.CanManageReservations, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}" Background="White" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="1" Width="38" Height="38" Padding="0" materialDesign:ButtonAssist.CornerRadius="10">
+                                                <materialDesign:PackIcon Kind="Pencil" Width="18" Height="18" Foreground="#111" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
@@ -226,7 +264,7 @@
         <!-- Right Slide-out Detail Panel -->
         <Border Grid.Column="1" HorizontalAlignment="Right" Background="{DynamicResource SidebarBackgroundBrush}" 
                 CornerRadius="20" BorderThickness="1" BorderBrush="{DynamicResource DividerBrush}"
-                Width="480" Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                Width="480" Visibility="{Binding IsPanelOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="40" Color="Black" Opacity="0.1" ShadowDepth="0"/>
             </Border.Effect>
@@ -241,8 +279,30 @@
                 <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource DividerBrush}" Padding="30">
                     <Grid>
                         <StackPanel>
-                            <TextBlock Text="Booking Manager" FontSize="24" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <TextBlock Text="ASSIGNMENT AND FINANCIALS" FontSize="10" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0" />
+                            <TextBlock FontSize="24" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="Reservation Overview"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                <Setter Property="Text" Value="Booking Manager"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock FontSize="10" FontWeight="Black" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,4,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="DETAILS &amp; PAYMENT STATUS"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                <Setter Property="Text" Value="ASSIGNMENT AND FINANCIALS"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </StackPanel>
                         <Button HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource MaterialDesignIconButton}" Command="{Binding CancelEditCommand}">
                             <materialDesign:PackIcon Kind="Close" Foreground="{DynamicResource TextSecondaryBrush}" />
@@ -250,8 +310,99 @@
                     </Grid>
                 </Border>
 
-                <!-- Scrollable Form -->
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <!-- View Mode ScrollViewer -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                              Visibility="{Binding IsViewingDetails, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <StackPanel Margin="30,25" DataContext="{Binding SelectedReservation}">
+                        
+                        <!-- Guest and Dates Header -->
+                        <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="15" Padding="25" Margin="0,0,0,25">
+                            <StackPanel>
+                                <TextBlock Text="{Binding CustomerName}" FontWeight="Black" FontSize="22" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,15"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Check-in" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBlock Text="{Binding CheckInDate, StringFormat=MMM dd yyyy}" FontSize="15" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                    
+                                    <materialDesign:PackIcon Grid.Column="1" Kind="ArrowRight" Foreground="{DynamicResource DividerBrush}" Width="24" Height="24" VerticalAlignment="Center" Margin="15,0"/>
+                                    
+                                    <StackPanel Grid.Column="2" HorizontalAlignment="Right">
+                                        <TextBlock Text="Check-out" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Right"/>
+                                        <TextBlock Text="{Binding CheckOutDate, StringFormat=MMM dd yyyy}" FontSize="15" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0" HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="RESERVATION DETAILS" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,15" />
+                        
+                        <Grid Margin="0,0,0,25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Room Number" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding RoomNumber}" FontSize="16" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Total Guests" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding BaseReservation.AdultsCount}" FontSize="16" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="STATUS &amp; BILLING" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,15" />
+
+                        <Grid Margin="0,0,0,25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Payment Status" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                                <Grid HorizontalAlignment="Left">
+                                    <Border Background="{Binding PaymentStatus, Converter={StaticResource StatusToColorBrushConverter}}" Opacity="0.15" CornerRadius="8" />
+                                    <TextBlock Text="{Binding PaymentStatus}" FontSize="12" FontWeight="Black" Foreground="{Binding PaymentStatus, Converter={StaticResource StatusToColorBrushConverter}}" Margin="15,8"/>
+                                </Grid>
+                            </StackPanel>
+                            
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Room Status" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                                <ComboBox ItemsSource="{Binding DataContext.RoomStatusOptions, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                          SelectedItem="{Binding DataContext.QuickChangeRoomStatus, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                          IsEnabled="{Binding DataContext.CanManageReservations, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                          Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                          Foreground="{DynamicResource TextPrimaryBrush}"
+                                          Height="40" Width="150" HorizontalAlignment="Left" />
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Margin="0,0,0,25">
+                            <TextBlock Text="Total Amount Due" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{Binding TotalPrice, StringFormat=C}" FontSize="32" FontWeight="Black" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,20">
+                            <TextBlock Text="Special Requests / Notes" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="10" Padding="15" Margin="0,8,0,0">
+                                <TextBlock Text="{Binding BaseReservation.Notes}" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap"/>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Scrollable Form Area (Edit Mode) -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                              Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <StackPanel Margin="30,25">
                         <TextBlock Text="GUEST CONFIGURATION" FontWeight="Black" FontSize="11" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,20" />
                         
@@ -299,7 +450,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0" Text="{Binding FormAdultsCount}" materialDesign:HintAssist.Hint="Adult Guests" Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" VerticalContentAlignment="Center"/>
                             <ComboBox Grid.Column="2" ItemsSource="{Binding PaymentStatusOptions}" SelectedItem="{Binding FormPaymentStatus}"
-                                      materialDesign:HintAssist.Hint="Payment Status" Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55"/>
+                                      materialDesign:HintAssist.Hint="Payment Status" Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55" IsEnabled="False"/>
                         </Grid>
 
                         <Grid Margin="0,0,0,30">
@@ -310,10 +461,37 @@
                             </Grid.ColumnDefinitions>
                             <ComboBox Grid.Column="0" ItemsSource="{Binding RoomStatusOptions}" SelectedItem="{Binding FormRoomStatus}"
                                       materialDesign:HintAssist.Hint="Room Status" Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55"/>
+                            <ComboBox Grid.Column="2" ItemsSource="{Binding PricingPlanOptions}" SelectedItem="{Binding FormPricingPlan}"
+                                      materialDesign:HintAssist.Hint="Pricing Plan" Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55"/>
                         </Grid>
 
                         <TextBox Text="{Binding FormNotes}" materialDesign:HintAssist.Hint="Operational Notes / Requests" 
                                  Style="{StaticResource MaterialDesignOutlinedTextBox}" TextWrapping="Wrap" AcceptsReturn="True" Height="100" Margin="0,0,0,30"/>
+
+                        <!-- Extra Bed Section — only visible when the room supports it -->
+                        <Border Visibility="{Binding FormSelectedRoomHasExtraBed, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Background="{DynamicResource AppBackgroundBrush}" CornerRadius="12" Padding="20" Margin="0,0,0,20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="EXTRA BED AVAILABLE" FontSize="10" FontWeight="Black"
+                                               Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,4"/>
+                                    <TextBlock FontSize="13" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}">
+                                        <Run Text="Add extra bed for"/>
+                                        <Run Text="{Binding FormSelectedRoom.ExtraBedPrice, StringFormat='+{0:C}/night', Mode=OneWay}"
+                                             Foreground="{DynamicResource SuccessGreenBrush}" FontWeight="Black"/>
+                                    </TextBlock>
+                                    <TextBlock Text="Total price will update automatically" FontSize="10"
+                                               Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <CheckBox Grid.Column="1" IsChecked="{Binding FormWantsExtraBed}"
+                                          VerticalAlignment="Center"
+                                          Style="{StaticResource MaterialDesignCheckBox}"/>
+                            </Grid>
+                        </Border>
 
                         <Border Background="{DynamicResource AppBackgroundBrush}" CornerRadius="15" Padding="25" Margin="0,10,0,0">
                             <StackPanel>
@@ -329,6 +507,7 @@
                 <Border Grid.Row="2" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource DividerBrush}" Padding="30">
                     <Grid>
                         <Button Content="DELETE" Command="{Binding DeleteCommand}" 
+                                Visibility="{Binding CanManageReservations, Converter={StaticResource BooleanToVisibilityConverter}}"
                                 Style="{StaticResource MaterialDesignFlatButton}" Foreground="{DynamicResource DangerRedBrush}" FontWeight="Black" HorizontalAlignment="Left" Padding="0"/>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -336,6 +515,7 @@
                                     Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="{DynamicResource DividerBrush}" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,15,0" Height="45" Padding="25,0" materialDesign:ButtonAssist.CornerRadius="12"/>
                                     
                             <Button Content="CONFIRM CHANGES" Command="{Binding SaveCommand}" 
+                                    Visibility="{Binding CanManageReservations, Converter={StaticResource BooleanToVisibilityConverter}}"
                                     Style="{StaticResource MaterialDesignFlatButton}" Background="{DynamicResource LuminousAccentBrush}" Foreground="White" FontWeight="Black" Height="45" Padding="30,0" materialDesign:ButtonAssist.CornerRadius="12" />
                         </StackPanel>
                     </Grid>

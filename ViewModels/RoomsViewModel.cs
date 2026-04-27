@@ -17,13 +17,41 @@ namespace HRS.ViewModels
         // Basic Information
         public string RoomNumber => BaseRoom?.RoomNumber;
         public int FloorNumber => BaseRoom?.FloorNumber ?? 0;
-        public string CleanStatus => BaseRoom?.CleanStatus;
+        public string CleanStatus
+        {
+            get => BaseRoom?.CleanStatus;
+            set
+            {
+                if (BaseRoom != null && BaseRoom.CleanStatus != value)
+                {
+                    BaseRoom.CleanStatus = value;
+                    
+                    // Logic: If room is not Clean, it should not be Available (mark as Maintenance)
+                    if (value != "Clean" && BaseRoom.Status == "Available")
+                    {
+                        BaseRoom.Status = "Maintenance";
+                        OnPropertyChanged(nameof(Status));
+                        OnPropertyChanged(nameof(AvailabilityStatus));
+                    }
+                    // If room becomes Clean and was Maintenance, return it to Available
+                    else if (value == "Clean" && BaseRoom.Status == "Maintenance")
+                    {
+                        BaseRoom.Status = "Available";
+                        OnPropertyChanged(nameof(Status));
+                        OnPropertyChanged(nameof(AvailabilityStatus));
+                    }
+
+                    OnPropertyChanged(nameof(CleanStatus));
+                    RoomsViewModel.QuickUpdateCleanStatus(this);
+                }
+            }
+        }
         public string Status => BaseRoom?.Status;
         public decimal RoomSize => BaseRoom?.RoomSize ?? 0;
         public string Description => BaseRoom?.Description;
         
         // Status
-        public string AvailabilityStatus => BaseRoom?.AvailabilityStatus ?? "Available";
+        public string AvailabilityStatus => BaseRoom?.Status ?? "Available";
         public string OperationalStatus => BaseRoom?.OperationalStatus ?? "Normal";
         
         // Capacity & Bed Configuration
@@ -140,6 +168,9 @@ namespace HRS.ViewModels
         public string FormCleanStatus { get => _formCleanStatus; set => SetProperty(ref _formCleanStatus, value); }
 
         public string[] CleanStatusOptions => new[] { "Clean", "Dirty", "Maintenance" };
+        
+        public bool IsAdmin => AuthService.IsAdmin();
+        public bool CanManageRooms => IsAdmin; // Only admins can add/edit/delete
 
         // Commands
         public ICommand SaveCommand { get; }
@@ -149,6 +180,20 @@ namespace HRS.ViewModels
         public ICommand EditRoomCommand { get; }
         public ICommand ViewRoomDetailsCommand { get; }
         public ICommand StartEditCommand { get; }
+
+        public static async void QuickUpdateCleanStatus(RoomDisplayModel display)
+        {
+            if (display?.BaseRoom == null) return;
+            try
+            {
+                await ApiService.PutAsync($"rooms/{display.BaseRoom.Id}", display.BaseRoom);
+                AuditService.Log("Housekeeping Update", $"Room {display.RoomNumber} marked as {display.CleanStatus}.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating housekeeping: {ex.Message}");
+            }
+        }
 
         public RoomsViewModel()
         {
@@ -188,6 +233,11 @@ namespace HRS.ViewModels
 
         private void PrepareNew()
         {
+            if (!IsAdmin)
+            {
+                MessageBox.Show("Access Denied: Only administrators can register new rooms.");
+                return;
+            }
             var viewModel = new AddRoomViewModel();
             var dialog = new Views.AddRoomDialog
             {
@@ -212,6 +262,11 @@ namespace HRS.ViewModels
 
         private void EditExisting()
         {
+            if (!IsAdmin)
+            {
+                MessageBox.Show("Access Denied: Only administrators can edit room technical details.");
+                return;
+            }
             if (SelectedRoom == null) return;
 
             // Open the new comprehensive dialog for editing
@@ -346,6 +401,7 @@ namespace HRS.ViewModels
                 };
 
                 await DataStore.UpdateRoomAsync(room);
+                AuditService.Log("Room Updated", $"Updated technical details for Room {room.RoomNumber}.", "Modification", "Info");
                 LoadData();
             }
             catch (Exception ex)
@@ -418,6 +474,7 @@ namespace HRS.ViewModels
                 };
 
                 await DataStore.AddRoomAsync(room);
+                AuditService.Log("Room Created", $"New room {room.RoomNumber} registered in system.", "Modification", "Info");
                 LoadData();
             }
             catch (Exception ex)
@@ -450,6 +507,11 @@ namespace HRS.ViewModels
 
         private async void Save()
         {
+            if (!IsAdmin)
+            {
+                MessageBox.Show("Access Denied: You do not have permission to modify rooms.");
+                return;
+            }
             if (string.IsNullOrWhiteSpace(FormRoomNumber)) return;
             int.TryParse(FormFloor, out int floor);
 
@@ -466,10 +528,12 @@ namespace HRS.ViewModels
                     room.Id = DataStore.GenerateId();
                     room.Status = "Available";
                     await ApiService.PostAsync<RoomModel>("rooms", room);
+                    AuditService.Log("Room Registered", $"Room {room.RoomNumber} added to inventory.", "Modification", "Info");
                 }
                 else
                 {
                     await ApiService.PutAsync($"rooms/{room.Id}", room);
+                    AuditService.Log("Room Modified", $"Basic info updated for Room {room.RoomNumber}.", "Modification", "Info");
                 }
 
                 await DataStore.LoadAsync(); // Refresh local data
@@ -495,7 +559,9 @@ namespace HRS.ViewModels
             {
                 try 
                 {
+                    string roomNum = SelectedRoom.RoomNumber;
                     await ApiService.DeleteAsync($"rooms/{SelectedRoom.BaseRoom.Id}");
+                    AuditService.Log("Room Removed", $"Room {roomNum} deleted from system inventory.", "Modification", "Warning");
                     await DataStore.LoadAsync();
                     IsEditing = false;
                     IsViewingDetails = false;

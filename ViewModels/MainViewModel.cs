@@ -22,6 +22,7 @@ namespace HRS.ViewModels
                     OnPropertyChanged(nameof(IsPaymentsActive));
                     OnPropertyChanged(nameof(IsReportsActive));
                     OnPropertyChanged(nameof(IsSettingsActive));
+                    OnPropertyChanged(nameof(IsAuditLogsActive));
                 }
             }
         }
@@ -34,6 +35,7 @@ namespace HRS.ViewModels
         public bool IsPaymentsActive => CurrentViewModel is PaymentsViewModel;
         public bool IsReportsActive => CurrentViewModel is ReportsViewModel;
         public bool IsSettingsActive => CurrentViewModel is SettingsViewModel;
+        public bool IsAuditLogsActive => CurrentViewModel is AuditLogsViewModel;
 
         public string CurrentUserName => AuthService.CurrentUser?.Username?.ToUpper() ?? "UNKNOWN";
         public string CurrentUserRole => AuthService.CurrentUser?.Role?.ToUpper() ?? "GUEST";
@@ -56,8 +58,8 @@ namespace HRS.ViewModels
         public bool IsReceptionist => AuthService.IsReceptionist();
         public bool IsAccountant => AuthService.IsAccountant();
 
-        public bool CanViewReservations => IsAdmin || IsReceptionist;
-        public bool CanViewCustomers => IsAdmin || IsReceptionist;
+        public bool CanViewReservations => IsAdmin || IsReceptionist || IsAccountant;
+        public bool CanViewCustomers => IsAdmin || IsReceptionist || IsAccountant;
         public bool CanViewRooms => IsAdmin || IsReceptionist;
         public bool CanViewPayments => true; 
         public bool CanViewReports => IsAdmin || IsAccountant;
@@ -70,6 +72,7 @@ namespace HRS.ViewModels
         public ICommand NavigatePaymentsCommand { get; }
         public ICommand NavigateReportsCommand { get; }
         public ICommand NavigateSettingsCommand { get; }
+        public ICommand NavigateAuditLogsCommand { get; }
         public ICommand LogoutCommand { get; }
         public ICommand ToggleThemeCommand { get; }
         public ICommand ToggleNotificationsCommand { get; }
@@ -88,6 +91,7 @@ namespace HRS.ViewModels
             NavigatePaymentsCommand     = new RelayCommand(_ => CurrentViewModel = new PaymentsViewModel()); 
             NavigateReportsCommand      = new RelayCommand(_ => CurrentViewModel = new ReportsViewModel());
             NavigateSettingsCommand     = new RelayCommand(_ => CurrentViewModel = new SettingsViewModel());
+            NavigateAuditLogsCommand    = new RelayCommand(_ => CurrentViewModel = new AuditLogsViewModel());
             LogoutCommand               = new RelayCommand(_ => Logout());
             ToggleThemeCommand          = new RelayCommand(_ => ToggleTheme());
             ToggleNotificationsCommand  = new RelayCommand(_ => IsNotificationsOpen = !IsNotificationsOpen);

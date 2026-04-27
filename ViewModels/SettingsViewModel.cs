@@ -14,7 +14,6 @@ namespace HRS.ViewModels
     public class SettingsViewModel : ViewModelBase
     {
         public ObservableCollection<UserModel> UsersList { get; set; }
-        public ObservableCollection<AuditLogModel> AuditLogsList { get; set; }
 
         // --- Hotel Identity Settings ---
         private string _hotelName;
@@ -84,7 +83,6 @@ namespace HRS.ViewModels
         public SettingsViewModel()
         {
             UsersList = new ObservableCollection<UserModel>(DataStore.Data.Users);
-            AuditLogsList = new ObservableCollection<AuditLogModel>(DataStore.Data.AuditLogs.OrderByDescending(log => log.Timestamp));
             
             SaveSettingsCommand = new RelayCommand(_ => SaveSettings());
             BackupCommand = new RelayCommand(_ => BackupDatabase());
@@ -95,7 +93,7 @@ namespace HRS.ViewModels
             FormRole = RoleOptions.FirstOrDefault();
 
             LoadSettings();
-            AuditService.Log("Accessed Settings", "Admin accessed system settings and audit logs.");
+            AuditService.Log("Accessed Settings", "Admin accessed system settings.");
         }
 
         private async void LoadSettings()
@@ -150,7 +148,6 @@ namespace HRS.ViewModels
         {
             try
             {
-                // Backup returns JSON. Let's use JToken to capture any schema
                 var backupData = await ApiService.PostAsync<Newtonsoft.Json.Linq.JToken>("settings/backup", new { });
                 
                 SaveFileDialog sfd = new SaveFileDialog

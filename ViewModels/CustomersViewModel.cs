@@ -25,7 +25,12 @@ namespace HRS.ViewModels
             {
                 if (SetProperty(ref _selectedCustomer, value))
                 {
-                    IsEditing = value != null;
+                    if (value == null)
+                    {
+                        IsViewingDetails = false;
+                        IsEditing = false;
+                    }
+                    
                     if (value != null)
                     {
                         // Copy values to the editing context to avoid modifying the grid directly before save
@@ -40,11 +45,26 @@ namespace HRS.ViewModels
                             Address = value.Address,
                             IdType = value.IdType,
                             IdNumber = value.IdNumber,
-                            CustomerType = value.CustomerType,
-                            Status = value.Status,
+                            IdExpiryDate = value.IdExpiryDate,
+                            PassportNumber = value.PassportNumber,
+                            DateOfBirth = value.DateOfBirth,
                             Occupation = value.Occupation,
                             Company = value.Company,
-                            Notes = value.Notes
+                            EmergencyContactName = value.EmergencyContactName,
+                            EmergencyContactPhone = value.EmergencyContactPhone,
+                            Notes = value.Notes,
+                            CustomerType = value.CustomerType,
+                            Status = value.Status,
+                            IsBlacklisted = value.IsBlacklisted,
+                            BlacklistReason = value.BlacklistReason,
+                            PreferredRoomType = value.PreferredRoomType,
+                            SmokingPreference = value.SmokingPreference,
+                            FloorPreference = value.FloorPreference,
+                            BedTypePreference = value.BedTypePreference,
+                            LoyaltyPoints = value.LoyaltyPoints,
+                            LoyaltyTier = value.LoyaltyTier,
+                            CreatedDate = value.CreatedDate,
+                            LastVisitDate = value.LastVisitDate
                         };
                     }
                 }
@@ -62,8 +82,27 @@ namespace HRS.ViewModels
         public bool IsEditing
         {
             get => _isEditing;
-            set => SetProperty(ref _isEditing, value);
+            set
+            {
+                if (SetProperty(ref _isEditing, value))
+                    OnPropertyChanged(nameof(IsPanelOpen));
+            }
         }
+
+        private bool _isViewingDetails;
+        public bool IsViewingDetails
+        {
+            get => _isViewingDetails;
+            set
+            {
+                if (SetProperty(ref _isViewingDetails, value))
+                    OnPropertyChanged(nameof(IsPanelOpen));
+            }
+        }
+
+        public bool IsPanelOpen => IsEditing || IsViewingDetails;
+        
+        public bool CanManageCustomers => AuthService.IsAdmin() || AuthService.IsReceptionist();
 
         private string _searchText;
         public string SearchText
@@ -82,13 +121,17 @@ namespace HRS.ViewModels
         public ICommand SaveCustomerCommand { get; }
         public ICommand CancelEditCommand { get; }
         public ICommand DeleteCustomerCommand { get; }
+        public ICommand ViewCustomerCommand { get; }
+        public ICommand EditCustomerCommand { get; }
 
         public CustomersViewModel()
         {
-            AddCustomerCommand = new RelayCommand(_ => AddCustomer());
-            SaveCustomerCommand = new RelayCommand(_ => SaveCustomer());
-            CancelEditCommand = new RelayCommand(_ => CancelEdit());
-            DeleteCustomerCommand = new RelayCommand(_ => DeleteCustomer());
+            AddCustomerCommand = new RelayCommand(_ => { if (CanManageCustomers) AddCustomer(); });
+            SaveCustomerCommand = new RelayCommand(_ => { if (CanManageCustomers) SaveCustomer(); });
+            CancelEditCommand = new RelayCommand(_ => { IsEditing = false; IsViewingDetails = false; });
+            DeleteCustomerCommand = new RelayCommand(_ => { if (CanManageCustomers) DeleteCustomer(); });
+            ViewCustomerCommand = new RelayCommand(c => { SelectedCustomer = c as CustomerModel; IsViewingDetails = true; IsEditing = false; });
+            EditCustomerCommand = new RelayCommand(c => { if (CanManageCustomers) { SelectedCustomer = c as CustomerModel; IsEditing = true; IsViewingDetails = false; } });
 
             LoadData();
         }
@@ -119,6 +162,7 @@ namespace HRS.ViewModels
         {
             SelectedCustomer = null;
             EditingContext = new CustomerModel { Status = "Active", CustomerType = "Regular" };
+            IsViewingDetails = false;
             IsEditing = true;
         }
 
@@ -137,11 +181,13 @@ namespace HRS.ViewModels
                     // New Customer
                     EditingContext.Id = DataStore.GenerateId();
                     await ApiService.PostAsync<CustomerModel>("customers", EditingContext);
+                    AuditService.Log("Guest Registered", $"New guest profile created for {EditingContext.FullName}.", "Modification", "Info");
                 }
                 else
                 {
                     // Update Existing
                     await ApiService.PutAsync($"customers/{EditingContext.Id}", EditingContext);
+                    AuditService.Log("Guest Profile Updated", $"Updated profile details for {EditingContext.FullName}.", "Modification", "Info");
                 }
 
                 await DataStore.LoadAsync();
@@ -170,7 +216,9 @@ namespace HRS.ViewModels
             {
                 try 
                 {
+                    string guestName = SelectedCustomer.FullName;
                     await ApiService.DeleteAsync($"customers/{SelectedCustomer.Id}");
+                    AuditService.Log("Guest Deleted", $"Removed guest profile for {guestName}.", "Modification", "Warning");
                     await DataStore.LoadAsync();
                     LoadData();
                     IsEditing = false;
@@ -192,13 +240,33 @@ namespace HRS.ViewModels
                 {
                     Id = customer.Id,
                     FullName = customer.FullName,
-                    Email = customer.Email,
                     Phone = customer.Phone,
+                    Email = customer.Email,
+                    Gender = customer.Gender,
+                    Nationality = customer.Nationality,
                     Address = customer.Address,
+                    IdType = customer.IdType,
+                    IdNumber = customer.IdNumber,
+                    IdExpiryDate = customer.IdExpiryDate,
                     PassportNumber = customer.PassportNumber,
-                    Status = customer.Status,
+                    DateOfBirth = customer.DateOfBirth,
+                    Occupation = customer.Occupation,
+                    Company = customer.Company,
+                    EmergencyContactName = customer.EmergencyContactName,
+                    EmergencyContactPhone = customer.EmergencyContactPhone,
+                    Notes = customer.Notes,
                     CustomerType = customer.CustomerType,
-                    CreatedDate = customer.CreatedDate
+                    Status = customer.Status,
+                    IsBlacklisted = customer.IsBlacklisted,
+                    BlacklistReason = customer.BlacklistReason,
+                    PreferredRoomType = customer.PreferredRoomType,
+                    SmokingPreference = customer.SmokingPreference,
+                    FloorPreference = customer.FloorPreference,
+                    BedTypePreference = customer.BedTypePreference,
+                    LoyaltyPoints = customer.LoyaltyPoints,
+                    LoyaltyTier = customer.LoyaltyTier,
+                    CreatedDate = customer.CreatedDate,
+                    LastVisitDate = customer.LastVisitDate
                 };
                 IsEditing = true;
             }

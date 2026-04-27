@@ -58,11 +58,23 @@
                 <!-- Update Password Section -->
                 <TextBlock Text="UPDATE PASSWORD" FontSize="11" FontWeight="Black" Foreground="{DynamicResource LuminousAccentBrush}" Margin="0,0,0,15" />
                 
-                <PasswordBox x:Name="CurrentPasswordBox" materialDesign:HintAssist.Hint="Current Password" Style="{StaticResource MaterialDesignFilledPasswordBox}" Margin="0,0,0,12" Background="{DynamicResource SidebarBackgroundBrush}" />
+                <PasswordBox x:Name="CurrentPasswordBox" materialDesign:HintAssist.Hint="Current Password" 
+                             Style="{StaticResource MaterialDesignFilledPasswordBox}" Margin="0,0,0,12" 
+                             Background="{DynamicResource SidebarBackgroundBrush}" 
+                             Foreground="{DynamicResource TextPrimaryBrush}"
+                             materialDesign:HintAssist.Foreground="{DynamicResource TextSecondaryBrush}" />
                 
-                <PasswordBox x:Name="NewPasswordBox" materialDesign:HintAssist.Hint="New Password" Style="{StaticResource MaterialDesignFilledPasswordBox}" Margin="0,0,0,12" Background="{DynamicResource SidebarBackgroundBrush}" />
+                <PasswordBox x:Name="NewPasswordBox" materialDesign:HintAssist.Hint="New Password" 
+                             Style="{StaticResource MaterialDesignFilledPasswordBox}" Margin="0,0,0,12" 
+                             Background="{DynamicResource SidebarBackgroundBrush}" 
+                             Foreground="{DynamicResource TextPrimaryBrush}"
+                             materialDesign:HintAssist.Foreground="{DynamicResource TextSecondaryBrush}" />
                 
-                <PasswordBox x:Name="ConfirmPasswordBox" materialDesign:HintAssist.Hint="Confirm New Password" Style="{StaticResource MaterialDesignFilledPasswordBox}" Margin="0,0,0,10" Background="{DynamicResource SidebarBackgroundBrush}" />
+                <PasswordBox x:Name="ConfirmPasswordBox" materialDesign:HintAssist.Hint="Confirm New Password" 
+                             Style="{StaticResource MaterialDesignFilledPasswordBox}" Margin="0,0,0,10" 
+                             Background="{DynamicResource SidebarBackgroundBrush}" 
+                             Foreground="{DynamicResource TextPrimaryBrush}"
+                             materialDesign:HintAssist.Foreground="{DynamicResource TextSecondaryBrush}" />
 
             </StackPanel>
 
@@ -75,7 +87,8 @@
                 
                 <Button Grid.Column="0" Content="CANCEL" Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="{DynamicResource TextSecondaryBrush}" BorderBrush="{DynamicResource DividerBrush}" Margin="0,0,10,0" Click="Close_Click" />
                 
-                <Button Grid.Column="1" Content="SAVE CHANGES" Style="{StaticResource MaterialDesignFlatButton}" Background="{DynamicResource LuminousAccentBrush}" Foreground="Black" FontWeight="Bold" Click="Save_Click" />
+                <Button Grid.Column="1" Content="SAVE CHANGES" Style="{StaticResource MaterialDesignFlatButton}" 
+                        Background="{DynamicResource LuminousAccentBrush}" Foreground="White" FontWeight="Bold" Click="Save_Click" />
             </Grid>
         </Grid>
     </Border>
