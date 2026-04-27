@@ -129,7 +129,7 @@ namespace HRS.ViewModels
         public bool IsAdmin => AuthService.IsAdmin();
         public bool CanProcessPayments => IsAccountant || IsAdmin;
         
-        public string HotelName => DataStore.Data.HotelInfo?.HotelName ?? "VECTOR HOTEL";
+        public string HotelName => DataStore.Data.Settings?.HotelName ?? "VECTOR HOTEL";
         
         // --- Analytics ---
         public decimal CashTotal => DataStore.Data.Payments.Where(p => p.Method == "Cash").Sum(p => p.Amount);

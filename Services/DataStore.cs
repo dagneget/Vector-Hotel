@@ -17,6 +17,7 @@ namespace HRS.Services
         public ObservableCollection<PaymentModel> Payments { get; set; } = new ObservableCollection<PaymentModel>();
         public ObservableCollection<ChargeModel> Charges { get; set; } = new ObservableCollection<ChargeModel>();
         public ObservableCollection<AuditLogModel> AuditLogs { get; set; } = new ObservableCollection<AuditLogModel>();
+        public SettingsModel Settings { get; set; } = new SettingsModel();
         
         // Lookup Lists
         public List<string> Currencies { get; set; } = new List<string> { "USD", "EUR", "GBP", "JPY", "AED", "SAR" };
@@ -66,10 +67,14 @@ namespace HRS.Services
                 try
                 {
                     var settings = await ApiService.GetAsync<SettingsModel>("settings");
-                    if (settings?.Currencies?.Count > 0)
-                        Data.Currencies = settings.Currencies;
-                    if (settings?.BedTypes?.Count > 0)
-                        Data.BedTypes = settings.BedTypes;
+                    if (settings != null)
+                    {
+                        Data.Settings = settings;
+                        if (settings.Currencies?.Count > 0)
+                            Data.Currencies = settings.Currencies;
+                        if (settings.BedTypes?.Count > 0)
+                            Data.BedTypes = settings.BedTypes;
+                    }
                 }
                 catch (Exception ex) 
                 { 
